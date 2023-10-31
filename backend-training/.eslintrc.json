@@ -1,0 +1,34 @@
+{
+  "env": {
+    "browser": true,
+    "es2022": true
+  },
+  "extends": "standard-with-typescript",
+  "overrides": [],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": ["tsconfig.json"]
+  },
+  "rules": {
+    "@typescript-eslint/strict-boolean-expressions": [
+      2,
+      {"allowNullableString":  true,
+        "allowNullableNumber":  true
+      }
+    ],
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": false
+      }
+    ],
+    "@typescript-eslint/no-extraneous-class": [
+      2,
+      {
+        "allowStaticOnly": true
+      }
+    ]
+  }
+
+}
