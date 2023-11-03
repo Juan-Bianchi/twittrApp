@@ -128,7 +128,7 @@ Endpoints for getting post information
 
 Fork this repository and complete the tasks. Then create a PR and start with your tasks.
 
-- ✅ There's an unused table `Follow` that stores follows between users. Create a new `follower` domain (with it's own controller, service and repositories) that has two new endpoints `POST /api/follower/follow/:user_id` and `POST /api/follower/unfollow/:user_id`.
+✅ There's an unused table `Follow` that stores follows between users. Create a new `follower` domain (with it's own controller, service and repositories) that has two new endpoints `POST /api/follower/follow/:user_id` and `POST /api/follower/unfollow/:user_id`.
 - [ ] All users are currently public, meaning that i can see tweets from anyone, without having to follow them. Add the ability for users to have private profiles and store it in the User table. Update the `GET api/post` to return only posts with public account authors or private account authors that the user follows.
 - [ ] Update the `GET api/post/:post_id` and `GET api/post/by_user/:user_id` to throw a 404 error if the author has a private account and the user does not follow them.
 - [ ] The frontend team needs to integrate with the server, but they don't know what endpoints you have available or what they do. Document the API using [Swagger](https://blog.logrocket.com/documenting-express-js-api-swagger/)
