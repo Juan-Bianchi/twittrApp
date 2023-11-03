@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc && tsc-alias",
     "prod": "yarn db:migrate && node dist/server.js",
-    "dev": "yarn db:migrate && yarn db:generate && nodemon -q",
+    "dev": "yarn db:migrate && yarn db:generate && nodemon -L",
     "lint": "eslint --fix && pretty-quick && prisma format",
     "db:migrate": "prisma migrate deploy",
     "db:make-migrations": "prisma migrate dev",
