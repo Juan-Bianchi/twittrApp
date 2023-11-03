@@ -11,6 +11,6 @@ export const router = Router()
 
 router.use('/health', healthRouter)
 router.use('/auth', authRouter)
-router.use('/follower', followRouter)
+router.use('/follower', withAuth, followRouter)
 router.use('/user', withAuth, userRouter)
 router.use('/post', withAuth, postRouter)

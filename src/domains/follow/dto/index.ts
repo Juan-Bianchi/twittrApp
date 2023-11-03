@@ -1,19 +1,29 @@
-export class followDTO {
+export class FollowDTO {
 
     id: string | undefined;
     followerId: string;
     followedId: string;
-    createdAt: Date | undefined;
-    updatedAt: Date | undefined;
-    deletedAt: Date | undefined;
+    createdAt: Date | null;
+    updatedAt: Date | null;
+    deletedAt: Date | null;
 
 
-    constructor(followerId: string, followedId: string, createdAt?: Date, updatedAt?: Date, id?: string, deletedAt?: Date) {
-       this.createdAt = createdAt;
-       this.deletedAt = deletedAt;
+    constructor(followDTO: FollowDTO) {
+       this.createdAt = followDTO.createdAt;
+       this.deletedAt = followDTO.deletedAt;
+       this.followedId = followDTO.followedId;
+       this.followerId = followDTO.followerId;
+       this.updatedAt = followDTO.updatedAt;
+       this.id = followDTO.id;
+    }
+}
+
+export class FollowInputDTO {
+    followerId: string;
+    followedId: string;
+
+    constructor(followerId: string, followedId: string) {
        this.followedId = followedId;
        this.followerId = followerId;
-       this.updatedAt = updatedAt;
-       this.id = id;
     }
 }

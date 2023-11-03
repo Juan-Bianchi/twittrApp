@@ -4,15 +4,31 @@ import HttpStatus from 'http-status'
 import 'express-async-errors'
 
 import { db } from '@utils'
+import { FollowService, FollowServiceImpl } from '../service';
+import { followRepositoryImpl } from '../repository';
+import { UserRepositoryImpl } from '@domains/user/repository';
+import { FollowDTO } from '../dto';
 
 export const followRouter = Router();
 
-followRouter.post('/follow/:user_id', async (req: Request, res: Response) => {
-    res.send('pasando por post follow by id! si')
+const followService: FollowService = new FollowServiceImpl(new followRepositoryImpl(db), new UserRepositoryImpl(db))
+
+followRouter.put('/follow/:user_id', async (req: Request, res: Response) => {
+    const {userId: followerID} = res.locals.context;
+    const {user_id: followedID} = req.params;
+
+    const newFollow: FollowDTO = await followService.followUser(followerID, followedID);
+
+    res.status(201).json(newFollow);
 })
 
-followRouter.post('/unfollow/:user_id', async (req:Request, res: Response) => {
-    res.send('pasando por post unfollow by id')
+followRouter.patch('/unfollow/:user_id', async (req:Request, res: Response) => {
+    const {userId: followerID} = res.locals.context;
+    const {user_id: followedID} = req.params;
+
+    const unfollowed: FollowDTO = await followService.unfollowUser(followerID, followedID);
+
+    res.status(200).json(unfollowed);
 } )
 
 

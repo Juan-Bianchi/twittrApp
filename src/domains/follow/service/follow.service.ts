@@ -1,6 +1,6 @@
-import { followDTO } from "../dto";
+import { FollowDTO } from "../dto";
 
-export interface followService {
-    followUser(followerId: string, followedId: string): Promise<followDTO>;
-    unfollowUser(followerId: string, followedId: string): Promise<followDTO>;
+export interface FollowService {
+    followUser(followerId: string, followedId: string): Promise<FollowDTO>;
+    unfollowUser(followerId: string, followedId: string): Promise<FollowDTO>;
 }
