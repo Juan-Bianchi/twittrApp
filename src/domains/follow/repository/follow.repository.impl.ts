@@ -1,11 +1,11 @@
-import { Follow, PrismaClient } from "@prisma/client";
+import { Follow, PrismaClient, prisma } from "@prisma/client";
 import { FollowDTO, FollowInputDTO } from "../dto";
 import { FollowRepository } from "./follow.repository";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { NotFoundException } from "@utils";
 
 
-export class followRepositoryImpl implements FollowRepository {
+export class FollowRepositoryImpl implements FollowRepository {
 
     constructor (private readonly db: PrismaClient) {}
 
@@ -65,7 +65,7 @@ export class followRepositoryImpl implements FollowRepository {
         }
         catch(error) {
             if(error instanceof PrismaClientKnownRequestError)
-                throw new NotFoundException(error.message);
+                throw new NotFoundException('follow');
             throw error;
         }
         
@@ -84,12 +84,14 @@ export class followRepositoryImpl implements FollowRepository {
 
     }
 
-    getFollowed(user: string): Promise<FollowDTO[]> {
-        throw new Error("Method not implemented.");
-    }
+    async getFollowed(userId: string): Promise<FollowDTO[]> {
+        const followArr: Follow[] =  await this.db.follow.findMany({
+            where: {
+                followerId: userId,
+            }
+        })
 
-    getFollowers(user: string): Promise<FollowDTO[]> {
-        throw new Error("Method not implemented.");
+        return followArr.map(follow => new FollowDTO(follow));
     }
 
 }

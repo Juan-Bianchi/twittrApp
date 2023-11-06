@@ -13,7 +13,7 @@ export class FollowServiceImpl implements FollowService {
     async followUser(followerId: string, followedId: string): Promise<FollowDTO> {
         const user: UserDTO | null = await this.userRep.getById(followedId);
         if(!user) {
-            throw new NotFoundException('USER_NOT_FOUND');
+            throw new NotFoundException('user');
         }
         const id: string | null = await this.followRep.getFollowId(followerId, followedId)
         let follow: FollowDTO | null;
@@ -31,12 +31,12 @@ export class FollowServiceImpl implements FollowService {
     async unfollowUser(followerId: string, followedId: string): Promise<FollowDTO> {
         const user: UserDTO | null = await this.userRep.getById(followedId);
         if(!user) {
-            throw new NotFoundException('USER_NOT_FOUND');
+            throw new NotFoundException('user');
         }
         const id: string | null = await this.followRep.getFollowId(followerId, followedId)
         let follow: FollowDTO | null;
         if(!id) {
-            throw new NotFoundException('THERE_IS_NOT_A_FOLLOWING_RELATIONSHIP')
+            throw new NotFoundException('follow')
         }
         else{
             follow = await this.followRep.getFollowById(id) as FollowDTO;
