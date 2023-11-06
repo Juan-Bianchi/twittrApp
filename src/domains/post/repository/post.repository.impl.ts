@@ -93,6 +93,9 @@ export class PostRepositoryImpl implements PostRepository {
                   followerId: userId
                 }
               }
+            },
+            {
+              id: userId, 
             }
           ]
         }
@@ -117,6 +120,9 @@ export class PostRepositoryImpl implements PostRepository {
                     followerId: userId
                   }
                 }
+              },
+              {
+                id: userId
               }
             ]
         },
