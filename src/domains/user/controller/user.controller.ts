@@ -1,6 +1,26 @@
 /**
  * @swagger
  * components:
+ *   securitySchemes:
+ *     bearerAuth:   
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *   responses:
+ *     NotFoundException:
+ *       description: Not found entity
+ *       content:
+ *           application/json:
+ *             schema:
+ *               code:
+ *                 type: number
+ *                 description: The Http error code
+ *               message:
+ *                 type: string
+ *                 description: The error message
+ *               error:
+ *                 type: object
+ *                 description: An object where you can set the error code by providing it when it is thrown
  *   schemas:
  *     UserDTO:
  *       type: object
@@ -91,6 +111,83 @@
  *         name: falseName
  *         username: fakeUsername
  *         profilePicture: null
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: User
+ *   description: The users managing API
+ * /api/user/ :
+ *   get:
+ *     summary: brings recommended users to follow
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [User]
+ *     responses:
+ *       200:
+ *         description: All recommended users have been brougth.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/UserDTO'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundException'
+ *       500:
+ *         description: Internal server error
+ *   delete:
+ *     summary: deletes the user
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [User]
+ *     responses:
+ *       200:
+ *         description: The user has been deleted
+ *       500:
+ *         description: Internal server error
+ * /api/user/me :
+ *   get:
+ *     summary: brings the authenticated user
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [User]
+ *     responses:
+ *       200:
+ *         description: The authenticated user has been brougth
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserDTO'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundException'
+ *       500:
+ *         description: Internal server error
+ * /api/user/{userId} :
+ *   get:
+ *     summary: brings from the database the selected user
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The id of the user I want to get
+ *     responses:
+ *       200:
+ *         description: The user has been brougth
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserDTO'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundException' 
+ *       500:
+ *         description: Internal server error  
  */
 
 import { Request, Response, Router } from 'express'

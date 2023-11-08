@@ -1,6 +1,30 @@
 /**
  * @swagger
  * components:
+ *   securitySchemes:
+ *     bearerAuth:   
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *   responses:
+ *     ConflictException:
+ *       description: There is a conflict because it is impossible to perform the request due to the objects state.
+ *       content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ConflictException'
+ *     NotFoundException:
+ *       description: Not found entity.
+ *       content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/NotFoundException'
+ *     UnauthorizedException: 
+ *       description: User not authorized beacause there is an authentication problem
+ *       content:
+ *          application/json:
+ *             schema:
+ *                $ref: '#/components/schemas/UnauthorizedException'
  *   schemas:
  *     TokenDTO:
  *       type: object
@@ -50,6 +74,81 @@
  *         email: swaggerUser@mail.com
  *         username: newSwaggerUSer
  *         password: Swagger123
+ *     UnauthorizedException:
+ *       type: object
+ *       required:
+ *         - code
+ *         - message
+ *         - error
+ *       properties:
+ *         code:
+ *           type: number
+ *           description: The Http error code
+ *         message:
+ *           type: string
+ *           description: The error message
+ *         error:
+ *           type: object
+ *           description: An object where you can set the error code by providing it when it is thrown
+ *       example:
+ *         code: 403
+ *         message: Forbidden action
+ *         error: NOT_VALID_TOKEN
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: The posts managing API
+ * /api/auth/signup :
+ *   post:
+ *     summary: creates a new user
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Auth]
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/SignupInputDTO'
+ *     responses:
+ *       201:
+ *         description: The user has been created and stored
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TokenDTO'
+ *       409:
+ *         $ref: '#/components/responses/ConflictException'       
+ *       500:
+ *         description: Internal server error
+ * /api/auth/login :
+ *   post:
+ *     summary: login a user
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Auth]
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/LoginInputDTO'
+ *     responses:
+ *       200:
+ *         description: The user has logged in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TokenDTO'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedException'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundException'
+ *       500:
+ *         description: Internal server error   
  */
 
 

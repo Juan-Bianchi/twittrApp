@@ -20,7 +20,7 @@ export class FollowServiceImpl implements FollowService {
         if(id) {
             follow = await this.followRep.getFollowById(id) as FollowDTO;
             if(!follow.deletedAt){
-                throw new ConflictException('USER_IS_ALREADY_FOLLOWING')
+                throw new ConflictException('ALREADY_FOLLOWING_USER')
             }
         }
         const followInput: FollowInputDTO = new FollowInputDTO(followerId, followedId)
@@ -41,7 +41,7 @@ export class FollowServiceImpl implements FollowService {
         else{
             follow = await this.followRep.getFollowById(id) as FollowDTO;
             if(follow.deletedAt){
-                throw new ConflictException('THERE_IS_NOT_A_FOLLOWING_RELATIONSHIP')
+                throw new ConflictException('ALREADY_NOT_FOLLOWING')
             }
         }
         return await this.followRep.unfollowUser(id);

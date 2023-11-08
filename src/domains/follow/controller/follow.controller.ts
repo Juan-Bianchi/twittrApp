@@ -1,6 +1,24 @@
 /**
  * @swagger
  * components:
+ *   securitySchemes:
+ *     bearerAuth:   
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *   responses:
+ *     ConflictException:
+ *       description: There is a conflict because it is impossible to perform the request due to the objects state.
+ *       content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ConflictException'
+ *     NotFoundException:
+ *       description: Not found entity.
+ *       content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/NotFoundException'
  *   schemas:
  *     FollowDTO:
  *       type: object
@@ -36,6 +54,106 @@
  *         createdAt: 2023-11-03 18:18:16.763
  *         updatedAt: 2023-11-03 19:14:23.145
  *         deletedAt: null
+ *     ConflictException:
+ *       type: object
+ *       required:
+ *         - code
+ *         - message
+ *         - error
+ *       properties:
+ *         code:
+ *           type: number
+ *           description: The Http error code
+ *         message:
+ *           type: string
+ *           description: The error message
+ *         error:
+ *           type: object
+ *           description: An object where you can set the error code by providing it when it is thrown
+ *       example:
+ *         code: 409
+ *         message: Conflict error message
+ *         error: CONFLICT
+ *     NotFoundException:
+ *       type: object
+ *       required:
+ *         - code
+ *         - message
+ *         - error
+ *       properties:
+ *         code:
+ *           type: number
+ *           description: The Http error code
+ *         message:
+ *           type: string
+ *           description: The error message
+ *         error:
+ *           type: object
+ *           description: An object where you can set the error code by providing it when it is thrown
+ *       example:
+ *         code: 404
+ *         message: Not found follow
+ *         error: null
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Follow
+ *   description: The follow relationships among users managing API
+ * /api/follower/follow/{user_id} :
+ *   put:
+ *     summary: the authenticated user starts following a new user whose id is provided as a request param
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Follow]
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The followed user id
+ *     responses:
+ *       202:
+ *         description: The follow relationship has been accepted.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FollowDTO'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundException'
+ *       409:
+ *         $ref: '#/components/responses/ConflictException'
+ *       500:
+ *         description: Internal server error
+ *         
+ * /api/follower/unfollow/{user_id} :
+ *   patch:
+ *     summary: the authenticated unfollows a user whose id is provided as a request param
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Follow]
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The unfollowed user id
+ *     responses:
+ *       202:
+ *         description: The follow relationship has been deleted.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FollowDTO'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundException'
+ *       409:
+ *         $ref: '#/components/responses/ConflictException'
+ *       500:
+ *         description: Internal server error
  */
 
 
@@ -60,7 +178,7 @@ followRouter.put('/follow/:user_id', async (req: Request, res: Response) => {
 
     const newFollow: FollowDTO = await followService.followUser(followerID, followedID);
 
-    res.status(HttpStatus.CREATED).json(newFollow);
+    res.status(HttpStatus.ACCEPTED).json(newFollow);
 })
 
 followRouter.patch('/unfollow/:user_id', async (req:Request, res: Response) => {
