@@ -1,3 +1,98 @@
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UserDTO:
+ *       type: object
+ *       required:
+ *         - id
+ *         - createdAt
+ *         - hasPrivateProfile
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the user
+ *         name:
+ *           type: string
+ *           description: The user name
+ *         createdAt:
+ *           type: object
+ *           format: date
+ *           description: The user creation date
+ *         hasPrivateProfile:
+ *           type: boolean
+ *           description: it shows if user has public or private profile
+ *       example:
+ *         id: 50e5c468-c8b3-4e83-b2ee-94507c409bb3
+ *         name: falseName
+ *         createdAt: 2023-11-03 17:40:35.567
+ *         hasPrivateProfile: false 
+ *     ExtendedUserDTO:
+ *       type: object
+ *       required:
+ *         - id
+ *         - createdAt
+ *         - hasPrivateProfile
+ *         - email
+ *         - username
+ *         - password
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the user
+ *         name:
+ *           type: string
+ *           description: The user name
+ *         createdAt:
+ *           type: object
+ *           format: date
+ *           description: The user creation date
+ *         hasPrivateProfile:
+ *           type: boolean
+ *           description: it shows if user has public or private profile
+ *         email:
+ *           type: string
+ *           description: The email of the user
+ *         username:
+ *           type: string
+ *           description: The name giving inside the system
+ *         password:
+ *           type: string
+ *           description: The password of the user
+ *       example:
+ *         id: 50e5c468-c8b3-4e83-b2ee-94507c409bb3
+ *         name: falseName
+ *         createdAt: 2023-11-03 17:40:35.567
+ *         hasPrivateProfile: false
+ *         email: falseEmail@mail.com
+ *         username: fakeUsername
+ *         password: fakePass123
+ *     UserViewDTO:
+ *       type: object
+ *       required:
+ *         - id
+ *         - name
+ *         - username
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the User
+ *         name:
+ *           type: string
+ *           description: The name of the user
+ *         username:
+ *           type: string
+ *           description: The name of the user given inside the system
+ *         profilePicture:
+ *           type: string
+ *           description: The user picture's URL 
+ *       example:
+ *         id: 50e5c468-c8b3-4e83-b2ee-94507c409bb3
+ *         name: falseName
+ *         username: fakeUsername
+ *         profilePicture: null
+ */
+
 import { Request, Response, Router } from 'express'
 import HttpStatus from 'http-status'
 // express-async-errors is a module that handles async errors in express, don't forget import it in your new controllers

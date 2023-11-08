@@ -9,8 +9,7 @@ import { UserRepositoryImpl } from '@domains/user/repository'
 import { UserDTO } from '@domains/user/dto'
 
 export class PostServiceImpl implements PostService {
-  constructor (private readonly repository: PostRepository, 
-               private readonly followRep: FollowRepository,
+  constructor (private readonly repository: PostRepository,
                private readonly userRep: UserRepositoryImpl) {}
 
   async createPost (userId: string, data: CreatePostInputDTO): Promise<PostDTO> {
