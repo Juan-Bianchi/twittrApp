@@ -1,3 +1,5 @@
+import { IsIn, IsString } from "class-validator";
+
 export class ReactionDTO {
     id: string | null | undefined;
     postId: string;
@@ -13,7 +15,9 @@ export class ReactionDTO {
 }
 
 export class ReactionInputDTO {
-    type: ReactionType;
+    @IsString()
+    @IsIn(['LIKE', 'RETWEET'])
+    type: keyof typeof ReactionType;
 
     constructor(type: ReactionType) {
         this.type = type;

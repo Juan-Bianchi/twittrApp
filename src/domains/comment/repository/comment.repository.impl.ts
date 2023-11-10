@@ -2,17 +2,18 @@ import { PrismaClient } from '@prisma/client'
 
 import { CursorPagination } from '@types'
 
-import { PostRepository } from '.'
-import { CreatePostInputDTO, PostDTO } from '../dto'
+import { CommentRepository } from '.'
+import { PostDTO } from '../../post/dto'
+import { CreateCommentInputDTO } from '../dto'
 
-export class PostRepositoryImpl implements PostRepository {
+export class CommentRepositoryImpl implements CommentRepository {
   constructor (private readonly db: PrismaClient) {}
 
-  async create (userId: string, data: CreatePostInputDTO): Promise<PostDTO> {
+  async create (userId: string, data: CreateCommentInputDTO): Promise<PostDTO> {
     const post = await this.db.post.create({
       data: {
         authorId: userId,
-        isAComment: false,
+        isAComment: true,
         ...data
       }
     })
@@ -39,6 +40,7 @@ export class PostRepositoryImpl implements PostRepository {
   async getPublicOrFollowedByDatePaginated (options: CursorPagination, userId: string): Promise<PostDTO[]> {
     const posts = await this.db.post.findMany({
       where : {
+        isAComment: true,
         OR: [
           {
             author: {
@@ -83,6 +85,7 @@ export class PostRepositoryImpl implements PostRepository {
     const post = await this.db.post.findFirst({
       where: {
         id: postId,
+        isAComment: true,
         author: {
           OR: [
             {
@@ -110,7 +113,7 @@ export class PostRepositoryImpl implements PostRepository {
     const posts = await this.db.post.findMany({
       where: {
           authorId,
-          isAComment: false,
+          isAComment: true,
           author: {
             OR: [
               {

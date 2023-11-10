@@ -1,4 +1,4 @@
-import { ForbiddenException, NotFoundException } from "@utils";
+import { ConflictException, ForbiddenException, NotFoundException } from "@utils";
 import { ReactionCreationDTO, ReactionDTO, ReactionType } from "../dto";
 import { ReactionRepository } from "../repository";
 import { ReactionService } from "./reaction.service";
@@ -22,16 +22,37 @@ export class ReactionServiceImpl implements ReactionService {
         if(!post) {
             throw new NotFoundException('post');
         }
+        if(reactionCreation.type !== 'LIKE' && reactionCreation.type !== 'RETWEET') {
+            throw new ConflictException('REACTION_TYPE_NOT_VALID');
+        }
+        const previousReaction = await this.reactionRep.getReactionByPostIdAndUserId(reactionCreation.postId, reactionCreation.userId);
+        if(previousReaction) {
+            throw new ConflictException('USER_HAS_ALREADY_REACTED_TO_THIS_POST');
+        }
+        
         return this.reactionRep.createReaction(reactionCreation);
     }
 
 
-    async getReactionsByUserId(userId: string): Promise<ReactionDTO[]> {
+    async getRetweetsByUserId(userId: string): Promise<ReactionDTO[]> {
         const user: UserDTO | null = await this.userRep.getById(userId);
         if(!user) {
             throw new NotFoundException('user');
         }
-        const reactions: ReactionDTO[] = await this.reactionRep.getReactionsByUserId(userId);
+        const reactions: ReactionDTO[] = (await this.reactionRep.getReactionsByUserId(userId)).filter(reaction => reaction.type === 'RETWEET');
+        if(!reactions.length) {
+            throw new NotFoundException('reactions');
+        }
+
+        return reactions;
+    }
+
+    async getLikesByUserId(userId: string): Promise<ReactionDTO []> {
+        const user: UserDTO | null = await this.userRep.getById(userId);
+        if(!user) {
+            throw new NotFoundException('user');
+        }
+        const reactions: ReactionDTO[] = (await this.reactionRep.getReactionsByUserId(userId)).filter(reaction => reaction.type === 'LIKE');
         if(!reactions.length) {
             throw new NotFoundException('reactions');
         }

@@ -7,6 +7,10 @@ import { UserService } from './user.service'
 export class UserServiceImpl implements UserService {
   constructor (private readonly repository: UserRepository) {}
 
+  async changeUserPrivacy(userId: string, hasPrivateProfile: boolean): Promise<UserDTO> {
+    return await this.repository.changeUserPrivacy(userId, hasPrivateProfile);
+  }
+
   async getUser (userId: any): Promise<UserDTO> {
     const user = await this.repository.getById(userId)
     if (!user) throw new NotFoundException('user')

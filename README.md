@@ -132,9 +132,9 @@ Fork this repository and complete the tasks. Then create a PR and start with you
 - ✅ All users are currently public, meaning that i can see tweets from anyone, without having to follow them. Add the ability for users to have private profiles and store it in the User table. Update the `GET api/post` to return only posts with public account authors or private account authors that the user follows.
 - ✅ Update the `GET api/post/:post_id` and `GET api/post/by_user/:user_id` to throw a 404 error if the author has a private account and the user does not follow them.
 - ✅ The frontend team needs to integrate with the server, but they don't know what endpoints you have available or what they do. Document the API using [Swagger](https://blog.logrocket.com/documenting-express-js-api-swagger/)
-- [ ] Add the ability to react to a post (like and retweet) both should be stored in the same table and using the endpoints `POST api/reaction/:post_id` and `DELETE api/reaction/:post_id`.
-- [ ] Add the ability to comment in posts, a comment should be stored as a post, but still be able to query posts and comments separately.
-- [ ] Create endpoints to query retweets, likes and comments by user id and put them in their respective domains.
+- ✅ Add the ability to react to a post (like and retweet) both should be stored in the same table and using the endpoints `POST api/reaction/:post_id` and `DELETE api/reaction/:post_id`.
+- ✅ Add the ability to comment in posts, a comment should be stored as a post, but still be able to query posts and comments separately.
+- ✅ Create endpoints to query retweets, likes and comments by user id and put them in their respective domains.
 - [ ] Users do not currently have a profile picture. Integrate with AWS S3 to store user profile pictures and post pictures. Careful! Do not receive images in your endpoints. Make use of S3 Pre-signed URLs. Update the UserDTO to include the profile image. You can use a public S3 bucket as it doesn't contain private data.
 - [ ] Update  `GET api/user/me` and `GET api/user`  to return `UserViewDTO`.
 - [ ] Create endpoint `GET api/comment/:post_id` to get comments by post. Add Cursor Based Pagination (You can see how it works [here](./src/types/index.ts)). It should return `ExtendedPostDTO` and sorted by reactions.

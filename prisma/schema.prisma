@@ -55,21 +55,25 @@ model Post {
   authorId String   @db.Uuid // Foreign Key
   content  String   @db.VarChar(240) // Limit the content to 240 characters
   images   String[]
+  postCommentedId String? @db.Uuid
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime? // Optional value
+  isAComment Boolean @default(false)
 
   reactions Reaction[]
-
+  comments Post[] @relation(name: "comments")
   author User @relation(fields: [authorId], references: [id], onDelete: Cascade) // One to many
+  postCommented Post? @relation(name: "comments", fields: [postCommentedId], references: [id], onDelete: Cascade) //One to many
+
 }
 
 model Reaction {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid // Primary Key
 
   postId String @db.Uuid()  // FK
-  userId String @db.Uuid()
+  userId String @db.Uuid()  // FK
   type ReactionType
 
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade) // One to many

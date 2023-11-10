@@ -9,7 +9,21 @@ export class ReactionRepositoryImpl implements ReactionRepository {
         const reaction = await this.db.reaction.findFirst({
             where: {
                 postId: postId,
-                type: type
+                type: type,
+            }
+        })
+        if(!reaction) {
+            return reaction
+        }
+
+        return new ReactionDTO(reaction);
+    }
+
+    async getReactionByPostIdAndUserId(postId: string, userId: string): Promise<ReactionDTO | null> {
+        const reaction = await this.db.reaction.findFirst({
+            where: {
+                postId,
+                userId
             }
         })
         if(!reaction) {

@@ -1,3 +1,6 @@
+import { IsBoolean } from "class-validator"
+
+
 export class UserDTO {
   constructor (user: UserDTO) {
     this.id = user.id
@@ -37,4 +40,9 @@ export class UserViewDTO {
   name: string
   username: string
   profilePicture: string | null
+}
+
+export class ChangePrivacyInputDTO {
+  @IsBoolean()
+    hasPrivateProfile!: boolean
 }

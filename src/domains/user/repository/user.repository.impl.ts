@@ -58,4 +58,15 @@ export class UserRepositoryImpl implements UserRepository {
     })
     return user ? new ExtendedUserDTO(user) : null
   }
+
+  async changeUserPrivacy(userId: string, hasPrivateProfile: boolean) : Promise<UserDTO> {
+    return this.db.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        hasPrivateProfile: hasPrivateProfile
+      }
+    })
+  }
 }

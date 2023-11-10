@@ -111,6 +111,16 @@
  *         name: falseName
  *         username: fakeUsername
  *         profilePicture: null
+ *     ChangePrivacyInputDTO:
+ *       type: object
+ *       required:
+ *         - hasPrivateProfile
+ *       properties:
+ *         hasPrivateProfile:
+ *           type: boolean
+ *           description: Shows if the user is going to have a public or private profile
+ *       example:
+ *         hasPrivateProfile: true
  */
 
 /**
@@ -187,6 +197,29 @@
  *       404:
  *         $ref: '#/components/responses/NotFoundException' 
  *       500:
+ *         description: Internal server error
+ * /api/user/privacy :
+ *   patch:
+ *     summary: change user privacy profile
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [User]
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/ChangePrivacyInputDTO'
+ *     responses:
+ *       200:
+ *         description: The user has been updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserDTO'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundException' 
+ *       500:
  *         description: Internal server error  
  */
 
@@ -195,10 +228,11 @@ import HttpStatus from 'http-status'
 // express-async-errors is a module that handles async errors in express, don't forget import it in your new controllers
 import 'express-async-errors'
 
-import { db } from '@utils'
+import { BodyValidation, db } from '@utils'
 
 import { UserRepositoryImpl } from '../repository'
 import { UserService, UserServiceImpl } from '../service'
+import { ChangePrivacyInputDTO } from '../dto'
 
 export const userRouter = Router()
 
@@ -236,4 +270,13 @@ userRouter.delete('/', async (req: Request, res: Response) => {
   await service.deleteUser(userId)
 
   return res.status(HttpStatus.OK)
+})
+
+userRouter.patch('/privacy', BodyValidation(ChangePrivacyInputDTO), async (req: Request, res: Response) => {
+  const { userId } = res.locals.context;
+  const { hasPrivateProfile } = req.body;
+
+  const user = await service.changeUserPrivacy(userId, hasPrivateProfile);
+
+  return res.status(HttpStatus.OK).json(user);
 })
