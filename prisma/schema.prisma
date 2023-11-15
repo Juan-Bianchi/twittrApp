@@ -24,6 +24,7 @@ model User {
   email    String  @unique // Unique constraint
   password String
   hasPrivateProfile Boolean @default(false)
+  profilePicture String?
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

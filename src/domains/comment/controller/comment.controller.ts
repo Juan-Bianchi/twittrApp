@@ -4,8 +4,8 @@ import HttpStatus from 'http-status'
 import 'express-async-errors'
 
 import { db, BodyValidation } from '@utils'
-import { CommentService } from '../comment.service'
-import { CommentServiceImpl } from '../comment.service.impl'
+import { CommentService } from '../service/comment.service'
+import { CommentServiceImpl } from '../service/comment.service.impl'
 import { PostRepositoryImpl } from '@domains/post/repository'
 import { UserRepositoryImpl } from '@domains/user/repository'
 import { CommentRepositoryImpl } from '../repository'
@@ -37,10 +37,10 @@ commentRouter.get('/:postId', async (req: Request, res: Response) => {
   
 commentRouter.get('/by_user/:user_id', async (req: Request, res: Response) => {
     const { userId } = res.locals.context
-    const { userId: authorId } = req.params
-  
+    const { user_id: authorId } = req.params
+
     const comments = await service.getCommentsByAuthor(userId, authorId)
-  
+
     return res.status(HttpStatus.OK).json(comments)
 })
 

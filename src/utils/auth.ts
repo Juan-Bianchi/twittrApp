@@ -21,6 +21,7 @@ export const withAuth = (req: Request, res: Response, next: () => any): void => 
   jwt.verify(token, Constants.TOKEN_SECRET, (err, context) => {
     if (err) throw new UnauthorizedException('INVALID_TOKEN')
     res.locals.context = context
+
     next()
   })
 }

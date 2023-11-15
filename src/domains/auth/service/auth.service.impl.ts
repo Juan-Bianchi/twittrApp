@@ -33,7 +33,7 @@ export class AuthServiceImpl implements AuthService {
     const isCorrectPassword = await checkPassword(data.password, user.password)
 
     if (!isCorrectPassword) throw new UnauthorizedException('INCORRECT_PASSWORD')
-
+    
     const token = generateAccessToken({ userId: user.id })
 
     return { token }

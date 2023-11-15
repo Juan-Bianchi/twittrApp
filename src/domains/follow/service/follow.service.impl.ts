@@ -2,7 +2,7 @@ import { FollowDTO, FollowInputDTO } from "../dto";
 import { FollowRepository } from "../repository";
 import { FollowService } from "./follow.service";
 import { UserRepository } from "@domains/user/repository";
-import { UserDTO } from "@domains/user/dto";
+import { UserDTO, UserViewDTO } from "@domains/user/dto";
 import { ConflictException, NotFoundException } from "@utils";
 
 
@@ -11,7 +11,7 @@ export class FollowServiceImpl implements FollowService {
     constructor(private readonly followRep: FollowRepository, private readonly userRep: UserRepository) { }   // con esto realizo la inyeccion automaticamente
 
     async followUser(followerId: string, followedId: string): Promise<FollowDTO> {
-        const user: UserDTO | null = await this.userRep.getById(followedId);
+        const user: UserViewDTO | null = await this.userRep.getById(followedId);
         if(!user) {
             throw new NotFoundException('user');
         }
@@ -29,7 +29,7 @@ export class FollowServiceImpl implements FollowService {
     }
 
     async unfollowUser(followerId: string, followedId: string): Promise<FollowDTO> {
-        const user: UserDTO | null = await this.userRep.getById(followedId);
+        const user: UserViewDTO | null = await this.userRep.getById(followedId);
         if(!user) {
             throw new NotFoundException('user');
         }

@@ -5,7 +5,7 @@ import { validate } from 'class-validator'
 import { ForbiddenException, NotFoundException } from '@utils'
 import { CursorPagination } from '@types'
 import { UserRepositoryImpl } from '@domains/user/repository'
-import { UserDTO } from '@domains/user/dto'
+import { UserDTO, UserViewDTO } from '@domains/user/dto'
 
 export class PostServiceImpl implements PostService {
   constructor (private readonly repository: PostRepository,
@@ -24,7 +24,7 @@ export class PostServiceImpl implements PostService {
   }
 
   async getPost (userId: string, postId: string): Promise<PostDTO> {
-    const author: UserDTO | null= await this.userRep.getById(userId);
+    const author: UserViewDTO | null= await this.userRep.getById(userId);
     if(!author) {
       throw new NotFoundException('user')
     }
@@ -36,7 +36,7 @@ export class PostServiceImpl implements PostService {
   }
 
   async getLatestPosts (userId: string, options: CursorPagination): Promise<PostDTO[]> {
-    const author: UserDTO | null= await this.userRep.getById(userId);
+    const author: UserViewDTO | null= await this.userRep.getById(userId);
     if(!author) {
       throw new NotFoundException('user')
     }
@@ -48,7 +48,7 @@ export class PostServiceImpl implements PostService {
   }
 
   async getPostsByAuthor (userId: string, authorId: string): Promise<PostDTO[]> {
-    const author: UserDTO | null= await this.userRep.getById(authorId);
+    const author: UserViewDTO | null= await this.userRep.getById(authorId);
     if(!author) {
       throw new NotFoundException('user')
     }

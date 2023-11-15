@@ -3,10 +3,10 @@ import { CommentService } from "./comment.service";
 import { UserRepository } from "@domains/user/repository";
 import { ForbiddenException, NotFoundException } from "@utils";
 import { validate } from "class-validator";
-import { UserDTO } from "@domains/user/dto";
-import { CommentRepository } from "./repository";
+import { UserViewDTO } from "@domains/user/dto";
+import { CommentRepository } from "../repository";
 import { CursorPagination } from "@types";
-import { CreateCommentInputDTO } from "./dto";
+import { CreateCommentInputDTO } from "../dto";
 import { PostRepository } from "@domains/post/repository";
 
 export class CommentServiceImpl implements CommentService {
@@ -36,7 +36,7 @@ export class CommentServiceImpl implements CommentService {
 
 
     async getCommentById(userId: string, commentId: string): Promise<PostDTO> {
-        const author: UserDTO | null= await this.userRep.getById(userId);
+        const author: UserViewDTO | null= await this.userRep.getById(userId);
         if(!author) {
         throw new NotFoundException('user')
         }
@@ -49,7 +49,7 @@ export class CommentServiceImpl implements CommentService {
 
 
     async getLatestComments(userId: string, options: CursorPagination): Promise<PostDTO[]> {
-        const author: UserDTO | null= await this.userRep.getById(userId);
+        const author: UserViewDTO | null= await this.userRep.getById(userId);
         if(!author) {
             throw new NotFoundException('user')
         }
@@ -62,16 +62,16 @@ export class CommentServiceImpl implements CommentService {
 
 
     async getCommentsByAuthor(userId: string, authorId: string): Promise<PostDTO[]> {
-        const author: UserDTO | null= await this.userRep.getById(authorId);
+        const author: UserViewDTO | null= await this.userRep.getById(authorId);
         if(!author) {
         throw new NotFoundException('user')
         }
-        const posts: PostDTO[] = await this.repository.getByAuthorId(authorId, userId);
-        if(!posts.length) {
-        throw new NotFoundException('posts')
+        const comments: PostDTO[] = await this.repository.getByAuthorId(authorId, userId);
+        if(!comments.length) {
+        throw new NotFoundException('comments')
         }
 
-        return posts;
+        return comments;
     }
 
     

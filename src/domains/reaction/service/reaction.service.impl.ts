@@ -3,7 +3,7 @@ import { ReactionCreationDTO, ReactionDTO, ReactionType } from "../dto";
 import { ReactionRepository } from "../repository";
 import { ReactionService } from "./reaction.service";
 import { UserRepository } from "@domains/user/repository";
-import { UserDTO } from "@domains/user/dto";
+import { UserDTO, UserViewDTO } from "@domains/user/dto";
 import { PostRepository } from "@domains/post/repository";
 import { PostDTO } from "@domains/post/dto";
 
@@ -14,7 +14,7 @@ export class ReactionServiceImpl implements ReactionService {
                 private readonly postRep: PostRepository) {}
 
     async createReaction(reactionCreation: ReactionCreationDTO): Promise<ReactionDTO> {
-        const user: UserDTO | null = await this.userRep.getById(reactionCreation.userId);
+        const user: UserViewDTO | null = await this.userRep.getById(reactionCreation.userId);
         if(!user) {
             throw new NotFoundException('user');
         }
@@ -35,7 +35,7 @@ export class ReactionServiceImpl implements ReactionService {
 
 
     async getRetweetsByUserId(userId: string): Promise<ReactionDTO[]> {
-        const user: UserDTO | null = await this.userRep.getById(userId);
+        const user: UserViewDTO | null = await this.userRep.getById(userId);
         if(!user) {
             throw new NotFoundException('user');
         }
@@ -48,7 +48,7 @@ export class ReactionServiceImpl implements ReactionService {
     }
 
     async getLikesByUserId(userId: string): Promise<ReactionDTO []> {
-        const user: UserDTO | null = await this.userRep.getById(userId);
+        const user: UserViewDTO | null = await this.userRep.getById(userId);
         if(!user) {
             throw new NotFoundException('user');
         }
@@ -62,7 +62,7 @@ export class ReactionServiceImpl implements ReactionService {
 
 
     async deleteReaction(postId: string, userId: string, type: ReactionType): Promise<ReactionDTO> {
-        const user: UserDTO | null = await this.userRep.getById(userId);
+        const user: UserViewDTO | null = await this.userRep.getById(userId);
         if(!user) {
             throw new NotFoundException('user');
         }

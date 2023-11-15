@@ -232,7 +232,7 @@ import { BodyValidation, db } from '@utils'
 
 import { UserRepositoryImpl } from '../repository'
 import { UserService, UserServiceImpl } from '../service'
-import { ChangePrivacyInputDTO } from '../dto'
+import { ChangePrivacyInputDTO, ProfilePictureNameDTO, UserDTO } from '../dto'
 
 export const userRouter = Router()
 
@@ -256,6 +256,15 @@ userRouter.get('/me', async (req: Request, res: Response) => {
   return res.status(HttpStatus.OK).json(user)
 })
 
+userRouter.get('/getSignedURL', async(req: Request, res: Response) => {
+  const { name } = req.body;
+  const { userId } = res.locals.context;
+
+  const url: string = await service.getPreSignedURL(name, userId);
+
+  return res.status(HttpStatus.CREATED).json(url);
+})
+
 userRouter.get('/:userId', async (req: Request, res: Response) => {
   const { userId: otherUserId } = req.params
 
@@ -277,6 +286,15 @@ userRouter.patch('/privacy', BodyValidation(ChangePrivacyInputDTO), async (req: 
   const { hasPrivateProfile } = req.body;
 
   const user = await service.changeUserPrivacy(userId, hasPrivateProfile);
+
+  return res.status(HttpStatus.OK).json(user);
+})
+
+userRouter.post('/profilePicture', async(req: Request, res: Response) => {
+  const { name } = req.body;
+  const { userId } = res.locals.context;
+
+  const user: UserDTO = await service.updateUserProfilePicture(name, userId);
 
   return res.status(HttpStatus.OK).json(user);
 })

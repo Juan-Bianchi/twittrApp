@@ -1,6 +1,6 @@
 import { PostDTO } from "@domains/post/dto"
 import { CursorPagination } from "@types"
-import { CreateCommentInputDTO } from "./dto"
+import { CreateCommentInputDTO } from "../dto"
 
 export interface CommentService {
     createComment: (userId: string, data: CreateCommentInputDTO) => Promise<PostDTO>
