@@ -10,6 +10,7 @@ import { PostRepositoryImpl } from '@domains/post/repository'
 import { UserRepositoryImpl } from '@domains/user/repository'
 import { CommentRepositoryImpl } from '../repository'
 import { CreateCommentInputDTO } from '../dto'
+import { PostDTO } from '@domains/post/dto'
 
 export const commentRouter = Router()
 
@@ -25,15 +26,18 @@ const service: CommentService = new CommentServiceImpl(new CommentRepositoryImpl
   
     return res.status(HttpStatus.OK).json(posts)
 })
-  
+*/
+
 commentRouter.get('/:postId', async (req: Request, res: Response) => {
     const { userId } = res.locals.context
     const { postId } = req.params
+    const { limit: limString, before, after } = req.query as Record<string, string>
+    const limit: number = Number(limString)
   
-    const post = await service.getPost(userId, postId)
+    const commments: PostDTO[] = await service.getByPostIdCursorPaginated(userId, postId, {limit , before, after})
   
-    return res.status(HttpStatus.OK).json(post)
-})*/
+    return res.status(HttpStatus.OK).json(commments)
+})
   
 commentRouter.get('/by_user/:user_id', async (req: Request, res: Response) => {
     const { userId } = res.locals.context

@@ -137,7 +137,7 @@ Fork this repository and complete the tasks. Then create a PR and start with you
 - :trophy: Create endpoints to query retweets, likes and comments by user id and put them in their respective domains.
 - :trophy: Users do not currently have a profile picture. Integrate with AWS S3 to store user profile pictures and post pictures. Careful! Do not receive images in your endpoints. Make use of S3 Pre-signed URLs. Update the UserDTO to include the profile image. You can use a public S3 bucket as it doesn't contain private data.
 - :trophy: Update  `GET api/user/me` and `GET api/user`  to return `UserViewDTO`.
-- [ ] Create endpoint `GET api/comment/:post_id` to get comments by post. Add Cursor Based Pagination (You can see how it works [here](./src/types/index.ts)). It should return `ExtendedPostDTO` and sorted by reactions.
+- :trophy: Create endpoint `GET api/comment/:post_id` to get comments by post. Add Cursor Based Pagination (You can see how it works [here](./src/types/index.ts)). It should return `ExtendedPostDTO` and sorted by reactions.
 - [ ] Create endpoint `GET api/user/by_username/:username` to return a list of `UserViewDTO`  of those users that their usernames are included in `:username`. Add pagination.
 - [ ] Update `GET api/post` and `GET api/post/by_user/:user_id` to return a list of `ExtendedPostDTO`.
 - [ ] Update `GET api/user/:user_id` to return `UserViewDTO`. Also return if the user follows the one making the request.

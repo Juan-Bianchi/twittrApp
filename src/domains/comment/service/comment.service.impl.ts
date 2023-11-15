@@ -1,4 +1,4 @@
-import { PostDTO } from "@domains/post/dto";
+import { ExtendedPostDTO, PostDTO } from "@domains/post/dto";
 import { CommentService } from "./comment.service";
 import { UserRepository } from "@domains/user/repository";
 import { ForbiddenException, NotFoundException } from "@utils";
@@ -13,6 +13,11 @@ export class CommentServiceImpl implements CommentService {
     constructor(private readonly repository: CommentRepository,
                 private readonly postRep: PostRepository,
                 private readonly userRep: UserRepository){}
+
+
+    async getByPostIdCursorPaginated(postCommentedId: string, userId: string, options: CursorPagination) : Promise<ExtendedPostDTO[]> {
+        return this.repository.getByPostIdCursorPaginated(postCommentedId, userId, options);
+    }
 
 
     async createComment(userId: string, data: CreateCommentInputDTO): Promise<PostDTO> {
@@ -64,15 +69,22 @@ export class CommentServiceImpl implements CommentService {
     async getCommentsByAuthor(userId: string, authorId: string): Promise<PostDTO[]> {
         const author: UserViewDTO | null= await this.userRep.getById(authorId);
         if(!author) {
-        throw new NotFoundException('user')
+            throw new NotFoundException('user')
         }
         const comments: PostDTO[] = await this.repository.getByAuthorId(authorId, userId);
         if(!comments.length) {
-        throw new NotFoundException('comments')
+            throw new NotFoundException('comments')
         }
 
         return comments;
     }
 
-    
+    async getCommentByPostIdgetByPostIdCursorPaginated (postCommentedId: string, userId: string, options: CursorPagination): Promise<PostDTO[]> {
+        const comments: PostDTO[] = await this.repository.getByPostIdCursorPaginated(postCommentedId, userId, options);
+        if(!comments.length) {
+            throw new NotFoundException('comments')
+        }
+
+        return comments;
+    }
 }

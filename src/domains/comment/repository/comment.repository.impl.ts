@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, ReactionType } from '@prisma/client'
 
 import { CursorPagination } from '@types'
 
 import { CommentRepository } from '.'
-import { PostDTO } from '../../post/dto'
+import { ExtendedPostDTO, PostDTO } from '../../post/dto'
 import { CreateCommentInputDTO } from '../dto'
 
 export class CommentRepositoryImpl implements CommentRepository {
@@ -39,6 +39,9 @@ export class CommentRepositoryImpl implements CommentRepository {
 
   async getPublicOrFollowedByDatePaginated (options: CursorPagination, userId: string): Promise<PostDTO[]> {
     const posts = await this.db.post.findMany({
+      cursor: options.after ? { id: options.after } : (options.before) ? { id: options.before } : undefined,
+      skip: options.after ?? options.before ? 1 : undefined,
+      take: options.limit ? (options.before ? -options.limit : options.limit) : undefined,
       where : {
         isAComment: true,
         OR: [
@@ -58,9 +61,6 @@ export class CommentRepositoryImpl implements CommentRepository {
           }
         ]
       },
-      cursor: options.after ? { id: options.after } : (options.before) ? { id: options.before } : undefined,
-      skip: options.after ?? options.before ? 1 : undefined,
-      take: options.limit ? (options.before ? -options.limit : options.limit) : undefined,
       orderBy: [
         {
           createdAt: 'desc'
@@ -134,5 +134,57 @@ export class CommentRepositoryImpl implements CommentRepository {
       }      
     })
     return posts.map(post => new PostDTO(post))
+  }
+
+  async getByPostIdCursorPaginated (postCommentedId: string, userId: string, options: CursorPagination): Promise<ExtendedPostDTO[]> {
+    const posts = await this.db.post.findMany({
+      cursor: options.after? {id: options.after}: options.before? {id:options.before}: undefined,
+      take: options.limit? (options.after? options.limit: -options.limit): undefined,
+      skip: options.after? 1: options.before? 1: undefined,
+      where: {
+          postCommentedId,
+          author: {
+            OR: [
+              {
+                hasPrivateProfile: false
+              },
+              {
+                followers: {
+                  some: {
+                    followerId: userId
+                  }
+                }
+              },
+              {
+                id: userId
+              }
+            ]
+        }
+      },
+      orderBy: {
+        id: 'asc'
+      },
+      include: {
+        reactions: true,
+        comments: true,
+        author: true
+      } 
+    })
+    return posts.map(post => {
+      return new ExtendedPostDTO(
+        {
+          id: post.id,
+          authorId: post.authorId,
+          content: post.content,
+          images: post.images,
+          createdAt: post.createdAt,
+          isAComment: post.isAComment,
+          author: post.author,
+          qtyComments: post.comments.length,
+          qtyLikes: post.reactions.filter(react => react.type === ReactionType.LIKE).length,
+          qtyRetweets: post.reactions.filter(react => react.type === ReactionType.RETWEET).length,
+        }
+      )
+    })
   }
 }
