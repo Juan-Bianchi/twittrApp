@@ -1,5 +1,5 @@
 import { NotFoundException } from '@utils/errors'
-import { OffsetPagination } from 'types'
+import { CursorPagination, OffsetPagination } from 'types'
 import { UserDTO, UserViewDTO } from '../dto'
 import { UserRepository } from '../repository'
 import { UserService } from './user.service'
@@ -11,14 +11,21 @@ import { ConflictException } from "../../../utils/errors";
 export class UserServiceImpl implements UserService {
   constructor (private readonly repository: UserRepository) {}
 
+
+  async getByUsernameCursorPaginated (username: string, options: CursorPagination): Promise<UserViewDTO[]> {
+    
+    return await this.repository.getByUsernameCursorPaginated(username, options);
+  }
+
   async changeUserPrivacy(userId: string, hasPrivateProfile: boolean): Promise<UserDTO> {
-    console.log(userId, hasPrivateProfile)
+
     return await this.repository.changeUserPrivacy(userId, hasPrivateProfile);
   }
 
   async getUser (userId: any): Promise<UserViewDTO> {
     const user = await this.repository.getById(userId)
     if (!user) throw new NotFoundException('user')
+
     return user
   }
 

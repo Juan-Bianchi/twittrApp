@@ -1,4 +1,4 @@
-import { OffsetPagination } from '@types'
+import { CursorPagination, OffsetPagination } from '@types'
 import { UserDTO, UserViewDTO } from '../dto'
 
 export interface UserService {
@@ -8,4 +8,5 @@ export interface UserService {
   getUserRecommendations: (userId: any, options: OffsetPagination) => Promise<UserDTO[]>
   getPreSignedURL(imgName: string, userId: string): Promise<string>
   updateUserProfilePicture: (imgName: string, userId: string) => Promise<UserDTO>
+  getByUsernameCursorPaginated: (username: string, options: CursorPagination) => Promise<UserViewDTO[]>
 }

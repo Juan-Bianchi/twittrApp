@@ -1,5 +1,5 @@
 import { SignupInputDTO } from '@domains/auth/dto'
-import { OffsetPagination } from '@types'
+import { CursorPagination, OffsetPagination } from '@types'
 import { ExtendedUserDTO, UserDTO, UserViewDTO } from '../dto'
 
 export interface UserRepository {
@@ -10,4 +10,5 @@ export interface UserRepository {
   getById: (userId: string) => Promise<UserViewDTO | null>
   getByEmailOrUsername: (email?: string, username?: string) => Promise<ExtendedUserDTO | null>
   updateProfilePicture: (userId: string, profilePicture: string)=> Promise<UserDTO>
+  getByUsernameCursorPaginated: (username: string, options: CursorPagination) => Promise<UserViewDTO[]>
 }

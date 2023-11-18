@@ -1,11 +1,30 @@
 import { SignupInputDTO } from '@domains/auth/dto'
-import { PrismaClient, User } from '@prisma/client'
-import { OffsetPagination } from '@types'
+import { PrismaClient } from '@prisma/client'
+import { CursorPagination, OffsetPagination } from '@types'
 import { ExtendedUserDTO, UserDTO, UserViewDTO } from '../dto'
 import { UserRepository } from './user.repository'
 
 export class UserRepositoryImpl implements UserRepository {
   constructor (private readonly db: PrismaClient) {}
+
+  async getByUsernameCursorPaginated(username: string, options: CursorPagination) : Promise<UserViewDTO[]> {
+    return this.db.user.findMany({
+      cursor: options.after? { id: options.after }: options.before? { id: options.before }: undefined,
+      take: options.limit?(options.after? options.limit: -options.limit): undefined,
+      skip: options.after? 1: options.before? 1: undefined,
+      where: {
+        username
+      },
+      orderBy: [
+        {
+          username: 'asc'
+        },
+        {
+          id: 'asc'
+        }
+      ]
+    }).then(users => users.map(user => new UserViewDTO(user)))
+  }
 
   async create (data: SignupInputDTO): Promise<UserDTO> {
     return await this.db.user.create({

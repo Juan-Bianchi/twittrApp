@@ -232,7 +232,7 @@ import { BodyValidation, db } from '@utils'
 
 import { UserRepositoryImpl } from '../repository'
 import { UserService, UserServiceImpl } from '../service'
-import { ChangePrivacyInputDTO, ProfilePictureNameDTO, UserDTO } from '../dto'
+import { ChangePrivacyInputDTO, ProfilePictureNameDTO, UserDTO, UserViewDTO } from '../dto'
 
 export const userRouter = Router()
 
@@ -271,6 +271,16 @@ userRouter.get('/:userId', async (req: Request, res: Response) => {
   const user = await service.getUser(otherUserId)
 
   return res.status(HttpStatus.OK).json(user)
+})
+
+userRouter.get('/by_username/:username', async (req: Request, res: Response) => {
+  const { username } = req.params;
+  const { limit: limitString, before, after } = req.query as Record<string, string>
+  const limit: number = Number(limitString);
+
+  const users: UserViewDTO[] = await service.getByUsernameCursorPaginated(username, { limit, before, after });
+
+  return res.status(HttpStatus.OK).json(users);
 })
 
 userRouter.delete('/', async (req: Request, res: Response) => {
