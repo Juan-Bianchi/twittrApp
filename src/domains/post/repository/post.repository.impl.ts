@@ -38,24 +38,6 @@ export class PostRepositoryImpl implements PostRepository {
 
   async getPublicOrFollowedByDatePaginated (options: CursorPagination, userId: string): Promise<ExtendedPostDTO[]> {
     const posts = await this.db.post.findMany({
-      where : {
-        OR: [
-          {
-            author: {
-              followers: {
-                some: {
-                  followerId: userId
-                }
-              }
-            } 
-          },
-          {
-            author: {
-              hasPrivateProfile: false
-            }
-          }
-        ]
-      },
       cursor: options.after ? { id: options.after } : (options.before) ? { id: options.before } : undefined,
       skip: options.after ?? options.before ? 1 : undefined,
       take: options.limit ? (options.before ? -options.limit : options.limit) : undefined,
@@ -63,6 +45,23 @@ export class PostRepositoryImpl implements PostRepository {
         author: true,
         comments: true,
         reactions: true
+      },
+      where : {
+        isAComment: false,
+        author: {
+          OR: [
+            {
+              followers: {
+                some: {
+                  followerId: userId
+                }
+              }
+            },
+            {
+              hasPrivateProfile: false
+            }
+          ]
+        }
       },
       orderBy: [
         {

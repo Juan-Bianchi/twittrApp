@@ -15,11 +15,6 @@ export class CommentServiceImpl implements CommentService {
                 private readonly userRep: UserRepository){}
 
 
-    async getByPostIdCursorPaginated(postCommentedId: string, userId: string, options: CursorPagination) : Promise<ExtendedPostDTO[]> {
-        return this.repository.getByPostIdCursorPaginated(postCommentedId, userId, options);
-    }
-
-
     async createComment(userId: string, data: CreateCommentInputDTO): Promise<PostDTO> {
         await validate(data)
         const post: PostDTO | null = await this.postRep.getById(data.postCommentedId, userId);
@@ -79,8 +74,8 @@ export class CommentServiceImpl implements CommentService {
         return comments;
     }
 
-    async getCommentByPostIdgetByPostIdCursorPaginated (postCommentedId: string, userId: string, options: CursorPagination): Promise<PostDTO[]> {
-        const comments: PostDTO[] = await this.repository.getByPostIdCursorPaginated(postCommentedId, userId, options);
+    async getCommentByPostIdCursorPaginated (postCommentedId: string, userId: string, options: CursorPagination): Promise<ExtendedPostDTO[]> {
+        const comments: ExtendedPostDTO[] = await this.repository.getByPostIdCursorPaginated(postCommentedId, userId, options);
         if(!comments.length) {
             throw new NotFoundException('comments')
         }

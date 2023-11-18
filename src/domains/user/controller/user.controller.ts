@@ -251,7 +251,7 @@ userRouter.get('/', async (req: Request, res: Response) => {
 userRouter.get('/me', async (req: Request, res: Response) => {
   const { userId } = res.locals.context
 
-  const user = await service.getUser(userId, userId)
+  const user = await service.getUser(userId)
 
   return res.status(HttpStatus.OK).json(user)
 })
@@ -269,7 +269,7 @@ userRouter.get('/:userId', async (req: Request, res: Response) => {
   const { userId: otherUserId } = req.params
   const { userId } = res.locals.context
 
-  const user = await service.getUser(userId, otherUserId)
+  const user = await service.getPublicOrFollowedUser(userId, otherUserId)
 
   return res.status(HttpStatus.OK).json(user)
 })

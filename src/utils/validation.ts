@@ -7,12 +7,10 @@ import { ClassType } from '@types'
 export function BodyValidation<T> (target: ClassType<T>) {
   return async (req: Request, res: Response, next: NextFunction) => {
     req.body = plainToInstance(target, req.body)
-    console.log(req.body)
     const errors = await validate(req.body, {
       whitelist: true,
       forbidNonWhitelisted: true
     })
-    console.log(errors)
 
     if (errors.length > 0) { throw new ValidationException(errors.map(error => ({ ...error, target: undefined, value: undefined }))) }
     next()

@@ -4,7 +4,8 @@ import { UserDTO, UserViewDTO } from '../dto'
 export interface UserService {
   changeUserPrivacy: (userId: string, hasPrivateProfile: boolean) => Promise<UserDTO>
   deleteUser: (userId: any) => Promise<void>
-  getUser: (userId: string, otherUserId: string) => Promise<UserViewDTO>
+  getUser: (userId: string) => Promise<UserViewDTO>
+  getPublicOrFollowedUser (userId: string, otherUserId: string): Promise<UserViewDTO | null>
   getUserRecommendations: (userId: any, options: OffsetPagination) => Promise<UserDTO[]>
   getPreSignedURL(imgName: string, userId: string): Promise<string>
   updateUserProfilePicture: (imgName: string, userId: string) => Promise<UserDTO>

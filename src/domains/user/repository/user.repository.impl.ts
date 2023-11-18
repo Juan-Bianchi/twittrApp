@@ -32,7 +32,7 @@ export class UserRepositoryImpl implements UserRepository {
     }).then(user => new UserDTO(user))
   }
 
-  async getById (userId: string, otherUserId: string): Promise<UserViewDTO | null> {
+  async getByIdPublicOrFollowed (userId: string, otherUserId: string): Promise<UserViewDTO | null> {
     const user = await this.db.user.findUnique({
       where: {
         id: otherUserId
@@ -44,12 +44,21 @@ export class UserRepositoryImpl implements UserRepository {
     if(user) {
       if(!user.hasPrivateProfile ||
          user.id.includes(userId) ||
-         user.followers.some(someUser => someUser.id.includes(userId))) {
+         user.followers.some(someUser => someUser.followerId.includes(userId))) {
           
         return new UserViewDTO(user)
       }
     }
     return null;
+  }
+
+  async getById (userId: string): Promise<UserViewDTO | null> {
+    const user = await this.db.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+    return user ? new UserViewDTO(user) : null
   }
 
   async delete (userId: any): Promise<void> {

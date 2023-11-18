@@ -18,17 +18,6 @@ const service: CommentService = new CommentServiceImpl(new CommentRepositoryImpl
                                                        new PostRepositoryImpl(db),
                                                        new UserRepositoryImpl(db));
 
-commentRouter.get('/:postId', async (req: Request, res: Response) => {
-    const { userId } = res.locals.context
-    const { postId } = req.params
-    const { limit: limString, before, after } = req.query as Record<string, string>
-    const limit: number = Number(limString)
-  
-    const commments: PostDTO[] = await service.getByPostIdCursorPaginated(userId, postId, {limit , before, after})
-  
-    return res.status(HttpStatus.OK).json(commments)
-})
-  
 commentRouter.get('/by_user/:user_id', async (req: Request, res: Response) => {
     const { userId } = res.locals.context
     const { user_id: authorId } = req.params
@@ -36,6 +25,17 @@ commentRouter.get('/by_user/:user_id', async (req: Request, res: Response) => {
     const comments = await service.getCommentsByAuthor(userId, authorId)
 
     return res.status(HttpStatus.OK).json(comments)
+})
+
+commentRouter.get('/:postId', async (req: Request, res: Response) => {
+    const { userId } = res.locals.context
+    const { postId } = req.params
+    const { limit: limString, before, after } = req.query as Record<string, string>
+    const limit: number = Number(limString)
+  
+    const commments: PostDTO[] = await service.getCommentByPostIdCursorPaginated(postId, userId, {limit , before, after})
+  
+    return res.status(HttpStatus.OK).json(commments)
 })
 
 commentRouter.post('/', BodyValidation(CreateCommentInputDTO), async (req: Request, res: Response) => {

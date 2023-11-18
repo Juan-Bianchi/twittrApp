@@ -142,23 +142,24 @@ export class CommentRepositoryImpl implements CommentRepository {
       take: options.limit? (options.after? options.limit: -options.limit): undefined,
       skip: options.after? 1: options.before? 1: undefined,
       where: {
-          postCommentedId,
-          author: {
-            OR: [
-              {
-                hasPrivateProfile: false
-              },
-              {
-                followers: {
-                  some: {
-                    followerId: userId
-                  }
+        postCommentedId,
+        isAComment: true,
+        author: {
+          OR: [
+            {
+              hasPrivateProfile: false
+            },
+            {
+              followers: {
+                some: {
+                  followerId: userId
                 }
-              },
-              {
-                id: userId
               }
-            ]
+            },
+            {
+              id: userId
+            }
+          ]
         }
       },
       orderBy: {
@@ -168,7 +169,7 @@ export class CommentRepositoryImpl implements CommentRepository {
         reactions: true,
         comments: true,
         author: true
-      } 
+      },
     })
     return posts.map(post => {
       return new ExtendedPostDTO(

@@ -8,5 +8,5 @@ export interface CommentService {
     getCommentById: (userId: string, commentId: string) => Promise<PostDTO>
     getLatestComments: (userId: string, options: CursorPagination) => Promise<PostDTO[]>
     getCommentsByAuthor: (userId: string, authorId: string) => Promise<PostDTO[]>
-    getByPostIdCursorPaginated: (postCommentedId: string, userId: string, options: CursorPagination) => Promise<ExtendedPostDTO[]>
+    getCommentByPostIdCursorPaginated: (postCommentedId: string, userId: string, options: CursorPagination) => Promise<ExtendedPostDTO[]>
 }
