@@ -32,13 +32,24 @@ export class UserRepositoryImpl implements UserRepository {
     }).then(user => new UserDTO(user))
   }
 
-  async getById (userId: any): Promise<UserViewDTO | null> {
+  async getById (userId: string, otherUserId: string): Promise<UserViewDTO | null> {
     const user = await this.db.user.findUnique({
       where: {
-        id: userId
+        id: otherUserId
+      },
+      include: {
+        followers: true
       }
     })
-    return user ? new UserViewDTO(user) : null
+    if(user) {
+      if(!user.hasPrivateProfile ||
+         user.id.includes(userId) ||
+         user.followers.some(someUser => someUser.id.includes(userId))) {
+          
+        return new UserViewDTO(user)
+      }
+    }
+    return null;
   }
 
   async delete (userId: any): Promise<void> {

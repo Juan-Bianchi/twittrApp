@@ -232,7 +232,7 @@ import { BodyValidation, db } from '@utils'
 
 import { UserRepositoryImpl } from '../repository'
 import { UserService, UserServiceImpl } from '../service'
-import { ChangePrivacyInputDTO, ProfilePictureNameDTO, UserDTO, UserViewDTO } from '../dto'
+import { ChangePrivacyInputDTO, UserDTO, UserViewDTO } from '../dto'
 
 export const userRouter = Router()
 
@@ -251,7 +251,7 @@ userRouter.get('/', async (req: Request, res: Response) => {
 userRouter.get('/me', async (req: Request, res: Response) => {
   const { userId } = res.locals.context
 
-  const user = await service.getUser(userId)
+  const user = await service.getUser(userId, userId)
 
   return res.status(HttpStatus.OK).json(user)
 })
@@ -267,8 +267,9 @@ userRouter.get('/getSignedURL', async(req: Request, res: Response) => {
 
 userRouter.get('/:userId', async (req: Request, res: Response) => {
   const { userId: otherUserId } = req.params
+  const { userId } = res.locals.context
 
-  const user = await service.getUser(otherUserId)
+  const user = await service.getUser(userId, otherUserId)
 
   return res.status(HttpStatus.OK).json(user)
 })

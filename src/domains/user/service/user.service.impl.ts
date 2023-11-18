@@ -22,8 +22,8 @@ export class UserServiceImpl implements UserService {
     return await this.repository.changeUserPrivacy(userId, hasPrivateProfile);
   }
 
-  async getUser (userId: any): Promise<UserViewDTO> {
-    const user = await this.repository.getById(userId)
+  async getUser (userId: string, otherUserId: string): Promise<UserViewDTO> {
+    const user = await this.repository.getById(userId, otherUserId)
     if (!user) throw new NotFoundException('user')
 
     return user

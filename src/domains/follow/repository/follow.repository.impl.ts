@@ -1,4 +1,4 @@
-import { Follow, PrismaClient, prisma } from "@prisma/client";
+import { Follow, PrismaClient } from "@prisma/client";
 import { FollowDTO, FollowInputDTO } from "../dto";
 import { FollowRepository } from "./follow.repository";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
