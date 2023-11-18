@@ -18,16 +18,6 @@ const service: CommentService = new CommentServiceImpl(new CommentRepositoryImpl
                                                        new PostRepositoryImpl(db),
                                                        new UserRepositoryImpl(db));
 
-/*commentRouter.get('/', async (req: Request, res: Response) => {
-    const { userId } = res.locals.context
-    const { limit, before, after } = req.query as Record<string, string>
-  
-    const posts = await service.getLatestPosts(userId, { limit: Number(limit), before, after })
-  
-    return res.status(HttpStatus.OK).json(posts)
-})
-*/
-
 commentRouter.get('/:postId', async (req: Request, res: Response) => {
     const { userId } = res.locals.context
     const { postId } = req.params

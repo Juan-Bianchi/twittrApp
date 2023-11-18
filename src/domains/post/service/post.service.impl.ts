@@ -1,11 +1,11 @@
-import { CreatePostInputDTO, PostDTO } from '../dto'
+import { CreatePostInputDTO, ExtendedPostDTO, PostDTO } from '../dto'
 import { PostRepository } from '../repository'
 import { PostService } from '.'
 import { validate } from 'class-validator'
 import { ForbiddenException, NotFoundException } from '@utils'
 import { CursorPagination } from '@types'
 import { UserRepositoryImpl } from '@domains/user/repository'
-import { UserDTO, UserViewDTO } from '@domains/user/dto'
+import { UserViewDTO } from '@domains/user/dto'
 
 export class PostServiceImpl implements PostService {
   constructor (private readonly repository: PostRepository,
@@ -35,24 +35,24 @@ export class PostServiceImpl implements PostService {
     return post
   }
 
-  async getLatestPosts (userId: string, options: CursorPagination): Promise<PostDTO[]> {
+  async getLatestPosts (userId: string, options: CursorPagination): Promise<ExtendedPostDTO[]> {
     const author: UserViewDTO | null= await this.userRep.getById(userId);
     if(!author) {
       throw new NotFoundException('user')
     }
-    const posts: PostDTO[] = await this.repository.getPublicOrFollowedByDatePaginated(options, userId);
+    const posts: ExtendedPostDTO[] = await this.repository.getPublicOrFollowedByDatePaginated(options, userId);
     if(!posts.length){
       throw new NotFoundException('posts');
     } 
     return posts;
   }
 
-  async getPostsByAuthor (userId: string, authorId: string): Promise<PostDTO[]> {
+  async getPostsByAuthor (userId: string, authorId: string): Promise<ExtendedPostDTO[]> {
     const author: UserViewDTO | null= await this.userRep.getById(authorId);
     if(!author) {
       throw new NotFoundException('user')
     }
-    const posts: PostDTO[] = await this.repository.getByAuthorId(authorId, userId);
+    const posts: ExtendedPostDTO[] = await this.repository.getByAuthorId(authorId, userId);
     if(!posts.length) {
       throw new NotFoundException('posts')
     }
