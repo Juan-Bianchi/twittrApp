@@ -3,7 +3,7 @@ import { ReactionCreationDTO, ReactionDTO, ReactionType } from "../dto";
 import { ReactionRepository } from "../repository";
 import { ReactionService } from "./reaction.service";
 import { UserRepository } from "@domains/user/repository";
-import { UserDTO, UserViewDTO } from "@domains/user/dto";
+import { UserViewDTO } from "@domains/user/dto";
 import { PostRepository } from "@domains/post/repository";
 import { PostDTO } from "@domains/post/dto";
 

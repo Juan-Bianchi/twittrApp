@@ -99,7 +99,9 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/PostDTO'
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/PostDTO'
  *       404:
  *         $ref: '#/components/responses/NotFoundException'
  *       500:
