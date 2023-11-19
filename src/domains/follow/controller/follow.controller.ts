@@ -54,6 +54,18 @@
  *         createdAt: 2023-11-03 18:18:16.763
  *         updatedAt: 2023-11-03 19:14:23.145
  *         deletedAt: null
+ *     FollowInputDTO:
+ *       type: object
+ *       required:
+ *         - followerId
+ *         - followedId
+ *       properties:
+ *         followerId:
+ *           type: string
+ *           description: The id of the user who is going to follow another
+ *         followedId: 
+ *           type: string
+ *           description: The id of the user who is going to be followed
  *     ConflictException:
  *       type: object
  *       required:

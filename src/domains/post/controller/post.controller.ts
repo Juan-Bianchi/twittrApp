@@ -50,6 +50,7 @@
  *         - content
  *         - images
  *         - createdAt
+ *         - isAComment
  *       properties:
  *         id:
  *           type: string
@@ -63,17 +64,21 @@
  *         images:
  *           type: array
  *           format: string[]
- *           description: An array with the images' URLs located on cloud.
+ *           description: An array with the images' URLs located on cloud
  *         createdAt:
  *           type: object
  *           format: date
- *           description: The post creation date. 
+ *           description: The post creation date.
+ *         isAComment:
+ *           type: boolean
+ *           description: It shows if is a comment of a post or not
  *       example:
  *         id: 64688fc8-b7aa-4778-9d01-72535af2c906
  *         authorId: 50e5c468-c8b3-4e83-b2ee-94507c409bb3
  *         content: this is another test twitt for swagger
  *         images: []
  *         createdAt: 2023-11-06 18:20:20.755
+ *         isAComment: false
  *     ExtendedPostDTO:
  *       type: object
  *       required:
@@ -82,6 +87,7 @@
  *         - content
  *         - images
  *         - createdAt
+ *         - isAComment
  *         - author
  *         - qtyComments
  *         - qtyLikes
@@ -103,7 +109,10 @@
  *         createdAt:
  *           type: object
  *           format: date
- *           description: The post creation date. 
+ *           description: The post creation date
+ *         isAComment:
+ *           type: boolean
+ *           description: It shows if is a comment of a post or not
  *         author:
  *           type: object
  *           format: ExtendedUserDTO
@@ -123,6 +132,7 @@
  *         content: this is another test twitt for swagger
  *         images: []
  *         createdAt: '2023-11-06 18:20:20.755'
+ *         isAComment: false
  *         author:
  *           id: '50e5c468-c8b3-4e83-b2ee-94507c409bb3'
  *           name: 'John Doe'
@@ -175,11 +185,9 @@
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/PostDTO'
+ *                 $ref: '#/components/schemas/ExtendedPostDTO'
  *       404:
  *         $ref: '#/components/responses/NotFoundException'
- *       403:
- *         $ref: '#/components/responses/ForbiddenException'
  *       500:
  *         description: Internal server error
  *   post:
@@ -238,7 +246,7 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/PostDTO'
+ *               $ref: '#/components/schemas/ExtendedPostDTO'
  *       404:
  *         $ref: '#/components/responses/NotFoundException'
  *       500:
