@@ -12,5 +12,5 @@ export class CreateCommentInputDTO {
 
     @IsString()
       postCommentedId!: string
-  }
+}
 

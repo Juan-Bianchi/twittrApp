@@ -14,6 +14,41 @@ export class CommentServiceImpl implements CommentService {
                 private readonly postRep: PostRepository,
                 private readonly userRep: UserRepository){}
 
+    async getCommentById(userId: string, commentId: string): Promise<PostDTO> {
+        const author: UserViewDTO | null= await this.userRep.getById(userId);
+        if(!author) {
+        throw new NotFoundException('user')
+        }
+        const comment = await this.repository.getById(commentId, userId)
+        if (!comment){
+        throw new NotFoundException('comment')
+        } 
+        return comment
+    }
+
+
+    async getCommentsByAuthor(userId: string, authorId: string): Promise<PostDTO[]> {
+        const author: UserViewDTO | null= await this.userRep.getById(authorId);
+        if(!author) {
+            throw new NotFoundException('user')
+        }
+        const comments: PostDTO[] = await this.repository.getByAuthorId(authorId, userId);
+        if(!comments.length) {
+            throw new NotFoundException('comments')
+        }
+
+        return comments;
+    }
+
+
+    async getCommentByPostIdCursorPaginated (postCommentedId: string, userId: string, options: CursorPagination): Promise<ExtendedPostDTO[]> {
+        const comments: ExtendedPostDTO[] = await this.repository.getByPostIdCursorPaginated(postCommentedId, userId, options);
+        if(!comments.length) {
+            throw new NotFoundException('comments')
+        }
+
+        return comments;
+    }
 
     async createComment(userId: string, data: CreateCommentInputDTO): Promise<PostDTO> {
         await validate(data)
@@ -32,54 +67,5 @@ export class CommentServiceImpl implements CommentService {
         if (!comment) throw new NotFoundException('post')
         if (comment.authorId !== userId) throw new ForbiddenException()
         await this.repository.delete(commentId)
-    }
-
-
-    async getCommentById(userId: string, commentId: string): Promise<PostDTO> {
-        const author: UserViewDTO | null= await this.userRep.getById(userId);
-        if(!author) {
-        throw new NotFoundException('user')
-        }
-        const comment = await this.repository.getById(commentId, userId)
-        if (!comment){
-        throw new NotFoundException('comment')
-        } 
-        return comment
-    }
-
-
-    async getLatestComments(userId: string, options: CursorPagination): Promise<PostDTO[]> {
-        const author: UserViewDTO | null= await this.userRep.getById(userId);
-        if(!author) {
-            throw new NotFoundException('user')
-        }
-        const posts: PostDTO[] = await this.repository.getPublicOrFollowedByDatePaginated(options, userId);
-        if(!posts.length){
-            throw new NotFoundException('posts');
-        } 
-        return posts;
-    }
-
-
-    async getCommentsByAuthor(userId: string, authorId: string): Promise<PostDTO[]> {
-        const author: UserViewDTO | null= await this.userRep.getById(authorId);
-        if(!author) {
-            throw new NotFoundException('user')
-        }
-        const comments: PostDTO[] = await this.repository.getByAuthorId(authorId, userId);
-        if(!comments.length) {
-            throw new NotFoundException('comments')
-        }
-
-        return comments;
-    }
-
-    async getCommentByPostIdCursorPaginated (postCommentedId: string, userId: string, options: CursorPagination): Promise<ExtendedPostDTO[]> {
-        const comments: ExtendedPostDTO[] = await this.repository.getByPostIdCursorPaginated(postCommentedId, userId, options);
-        if(!comments.length) {
-            throw new NotFoundException('comments')
-        }
-
-        return comments;
     }
 }
