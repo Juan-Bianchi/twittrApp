@@ -17,7 +17,7 @@ export class CommentServiceImpl implements CommentService {
     async getCommentById(userId: string, commentId: string): Promise<PostDTO> {
         const author: UserViewDTO | null= await this.userRep.getById(userId);
         if(!author) {
-        throw new NotFoundException('user')
+            throw new NotFoundException('user')
         }
         const comment = await this.repository.getById(commentId, userId)
         if (!comment){
