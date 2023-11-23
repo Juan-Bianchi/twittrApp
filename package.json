@@ -29,6 +29,7 @@
     "method-override": "^3.0.0",
     "morgan": "^1.10.0",
     "signale": "^1.4.0",
+    "socket.io": "^4.7.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
   },
@@ -42,6 +43,7 @@
     "@types/morgan": "^1.9.4",
     "@types/node": "^18.11.18",
     "@types/signale": "^1.4.4",
+    "@types/socket.io": "^3.0.2",
     "@types/swagger-jsdoc": "^6.0.3",
     "@types/swagger-ui-express": "^4.1.6",
     "@types/uuid": "^9.0.7",

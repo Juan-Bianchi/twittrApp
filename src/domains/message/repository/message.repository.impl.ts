@@ -6,11 +6,11 @@ export class MessageRepositoryImpl implements MessageRepository {
 
     constructor(private readonly db: PrismaClient){}
 
-    async saveMessage(userId: string, recieverId: string, body: string) : Promise<MessageDTO>{
+    async saveMessage(from: string, to: string, body: string) : Promise<MessageDTO>{
         const message = await this.db.message.create({
             data: {
-                from: userId,
-                to: recieverId,
+                from,
+                to,
                 body,
             }
         })

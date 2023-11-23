@@ -52,7 +52,8 @@ export class FollowServiceImpl implements FollowService {
         if(!user) {
             throw new NotFoundException('user');
         }
-        return !this.followRep.getFollowId(followerId, followedId)
+        const id: string | null = await this.followRep.getFollowId(followerId, followedId)
+        return id? true: false;
     }
 
 }

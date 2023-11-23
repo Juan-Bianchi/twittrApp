@@ -5,18 +5,24 @@ import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 
 
-import { Constants, NodeEnv, Logger } from '@utils'
+import { Constants, NodeEnv, Logger, db } from '@utils'
 import { router } from '@router'
 import { ErrorHandling } from '@utils/errors'
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { specs } from '@utils/swagger'
-import { SocketChat } from '@domains/message/dto'
+
 
 
 const app = express()
 const server = createServer(app)
-export const io = new Server<SocketChat>(server);
+export const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:3000',
+  }
+});
+
+import '@utils/socket'
 
 app.use(
   "/api-docs",
@@ -37,7 +43,7 @@ app.use(cookieParser()) // Parse cookies
 // Set up CORS
 app.use(
   cors({
-    origin: Constants.CORS_WHITELIST
+    origin: `*`
   })
 )
 

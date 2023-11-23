@@ -32,6 +32,7 @@ io.use((socket: SocketChat, next) => {
             socket.userId = userId;
         }
     })
+
     next()
 })
 
@@ -42,18 +43,18 @@ io.on('connection', (socket: SocketChat) => {
     socket.on('load chat', async (data) => {
         const { from, to } = data;
         const messages: MessageDTO[] = await service.loadChat(from, to);
-
         const room: string = [from, to].sort().join('&&&&');
+        console.log('cargando chat')
+        console.log(messages)
         socket.join(room);
-        socket.to(room).emit('allMessages', messages)
+        io.to(room).emit('allMessages', messages)
     })
 
     socket.on('chat message', async (data) => {
         const { from, to, body } = data
         const room: string = [from, to].sort().join('&&&&');
         const message: MessageDTO = await service.saveMessage(from, to, body);
-
-        socket.to(room).emit('message', message)
+        io.to(room).emit('message', message)
     })
 
     socket.on('disconnect', () => {

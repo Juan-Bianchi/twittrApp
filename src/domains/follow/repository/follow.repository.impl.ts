@@ -1,8 +1,9 @@
 import { Follow, PrismaClient } from "@prisma/client";
 import { FollowDTO, FollowInputDTO } from "../dto";
 import { FollowRepository } from "./follow.repository";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
+
 import { NotFoundException } from "@utils";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 
 export class FollowRepositoryImpl implements FollowRepository {
