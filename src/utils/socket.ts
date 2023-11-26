@@ -24,40 +24,60 @@ const followServ: FollowServiceImpl = new FollowServiceImpl(followRep, userRep);
 const service: MessageServiceImpl = new MessageServiceImpl(messageRep, followServ)
 
 io.use((socket: SocketChat, next) => {
-    const token: string = socket.handshake.auth.token as string;
-    jwt.verify(token, Constants.TOKEN_SECRET, (err, decoded) => {
-        if (err) throw new UnauthorizedException('INVALID_TOKEN')
-        if(decoded) {
-            const {userId} = decoded as MyToken
-            socket.userId = userId;
+    try {
+        const token: string = socket.handshake.auth.token as string;
+        jwt.verify(token, Constants.TOKEN_SECRET, (err, decoded) => {
+            if (err) throw new UnauthorizedException('INVALID_TOKEN')
+            if(decoded) {
+                const {userId} = decoded as MyToken
+                socket.userId = userId;
+            }
+        })
+    
+        next()
+    }
+    catch(error) {
+        if(error instanceof UnauthorizedException) {
+            console.error(error.code)
         }
-    })
-
-    next()
+        socket.disconnect()
+    }
 })
 
 io.on('connection', (socket: SocketChat) => {
+    try {
+        console.log(`user: ${socket.userId} is connected`);
 
-    console.log(`user: ${socket.userId} is connected`);
-
-    socket.on('load chat', async (data) => {
-        const { from, to } = data;
-        const messages: MessageDTO[] = await service.loadChat(from, to);
-        const room: string = [from, to].sort().join('&&&&');
-        console.log('cargando chat')
-        console.log(messages)
-        socket.join(room);
-        io.to(room).emit('allMessages', messages)
-    })
-
-    socket.on('chat message', async (data) => {
-        const { from, to, body } = data
-        const room: string = [from, to].sort().join('&&&&');
-        const message: MessageDTO = await service.saveMessage(from, to, body);
-        io.to(room).emit('message', message)
-    })
-
-    socket.on('disconnect', () => {
-        console.log(`user: ${socket.userId} has left all rooms and has been disconnected`);
-    });
+        socket.on('load chat', async (data) => {
+            const { from, to } = data;
+            const messages: MessageDTO[] = await service.loadChat(from, to);
+            const room: string = [from, to].sort().join('&&&&');
+            console.log('loading chat')
+            const clientsInRoom = io.sockets.adapter.rooms.get(room);
+            console.log(clientsInRoom)
+            if (!clientsInRoom || !clientsInRoom.has(socket.id)) {
+                socket.join(room);            
+            } 
+            
+            io.to(room).emit('allMessages', messages)
+        })
+    
+        socket.on('chat message', async (data) => {
+            const { from, to, body } = data
+            const room: string = [from, to].sort().join('&&&&');
+            const message: MessageDTO | undefined = await service.saveMessage(from, to, body);
+            io.to(room).emit('message', message)
+        })
+    
+        socket.on("connect_error", (err) => {
+            console.log(err.message); // prints the message associated with the error
+        });
+    
+        socket.on('disconnect', () => {
+            console.log(`user: ${socket.userId} has left all rooms and has been disconnected`);
+        });
+    }
+    catch(error) {
+        socket.disconnect();
+    }
 });
