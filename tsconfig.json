@@ -25,6 +25,6 @@
     }
   },
   "lib": ["es2022"],
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "server.ts", "singleton.ts", "client.ts"],
   "exclude": ["node_modules"]
 }

@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
-import { Constants } from '@utils'
-import { UnauthorizedException } from '@utils/errors'
+import { Constants } from './constants'
+import { UnauthorizedException } from './errors'
 
 export const generateAccessToken = (payload: Record<string, string | boolean | number>): string => {
   // Do not use this in production, the token will last 24 hours

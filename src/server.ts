@@ -5,7 +5,7 @@ import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 
 
-import { Constants, NodeEnv, Logger, db } from '@utils'
+import { Constants, NodeEnv, Logger } from '@utils'
 import { router } from '@router'
 import { ErrorHandling } from '@utils/errors'
 import { createServer } from "http";

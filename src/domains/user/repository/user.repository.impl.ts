@@ -13,12 +13,11 @@ export class UserRepositoryImpl implements UserRepository {
       take: options.limit?(options.after? options.limit: -options.limit): undefined,
       skip: options.after? 1: options.before? 1: undefined,
       where: {
-        username
+        username: {
+          contains: username
+        }
       },
       orderBy: [
-        {
-          username: 'asc'
-        },
         {
           id: 'asc'
         }
@@ -44,7 +43,7 @@ export class UserRepositoryImpl implements UserRepository {
     if(user) {
       if(!user.hasPrivateProfile ||
          user.id.includes(userId) ||
-         user.followers.some(someUser => someUser.followerId.includes(userId))) {
+         user.followers?.some(someUser => someUser.followerId.includes(userId))) {
           
         return new UserViewDTO(user)
       }

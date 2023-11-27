@@ -1,4 +1,4 @@
-import { UserRepository } from '@domains/user/repository'
+import { UserRepository } from '../../user/repository'
 import {
   checkPassword,
   ConflictException,
@@ -6,7 +6,7 @@ import {
   generateAccessToken,
   NotFoundException,
   UnauthorizedException
-} from '@utils'
+} from '../../../utils'
 
 import { LoginInputDTO, SignupInputDTO, TokenDTO } from '../dto'
 import { AuthService } from './auth.service'

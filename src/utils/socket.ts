@@ -1,7 +1,7 @@
 import { io } from "@server";
 import jwt from 'jsonwebtoken';
 import { Constants } from "./constants";
-import { UnauthorizedException } from "./errors";
+import { ConflictException, ForbiddenException, NotFoundException, UnauthorizedException } from "./errors";
 import { MessageServiceImpl } from "@domains/message/service";
 import { MessageRepositoryImpl } from "@domains/message/repository";
 import { db } from '@utils'
@@ -9,6 +9,7 @@ import { FollowServiceImpl } from "@domains/follow/service";
 import { FollowRepositoryImpl } from "@domains/follow/repository";
 import { UserRepositoryImpl } from "@domains/user/repository";
 import { MessageDTO, SocketChat } from "@domains/message/dto";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 type MyToken = {
     userId: string
@@ -21,7 +22,7 @@ const messageRep:  MessageRepositoryImpl = new MessageRepositoryImpl(db);
 const userRep: UserRepositoryImpl = new UserRepositoryImpl(db);
 const followServ: FollowServiceImpl = new FollowServiceImpl(followRep, userRep);
 
-const service: MessageServiceImpl = new MessageServiceImpl(messageRep, followServ)
+const service: MessageServiceImpl = new MessageServiceImpl(messageRep, followServ);
 
 io.use((socket: SocketChat, next) => {
     try {
@@ -50,23 +51,42 @@ io.on('connection', (socket: SocketChat) => {
 
         socket.on('load chat', async (data) => {
             const { from, to } = data;
-            const messages: MessageDTO[] = await service.loadChat(from, to);
             const room: string = [from, to].sort().join('&&&&');
-            console.log('loading chat')
-            const clientsInRoom = io.sockets.adapter.rooms.get(room);
-            console.log(clientsInRoom)
-            if (!clientsInRoom || !clientsInRoom.has(socket.id)) {
-                socket.join(room);            
+            try {
+                console.log('loading chat')
+                const clientsInRoom = io.sockets.adapter.rooms.get(room);
+                console.log(clientsInRoom)
+                if (!clientsInRoom || !clientsInRoom.has(socket.id)) {
+                    socket.join(room);            
+                }
+                const messages: MessageDTO[] = await service.loadChat(from, to);
+                io.to(room).emit('allMessages', messages)
+            }
+            catch(error) {
+                if( error instanceof NotFoundException || 
+                    error instanceof ConflictException ) {
+                        console.error(error.message)
+                }
+                console.log(error)
+                io.to(room).emit('allMessages', [])
             } 
-            
-            io.to(room).emit('allMessages', messages)
         })
     
         socket.on('chat message', async (data) => {
             const { from, to, body } = data
             const room: string = [from, to].sort().join('&&&&');
-            const message: MessageDTO | undefined = await service.saveMessage(from, to, body);
-            io.to(room).emit('message', message)
+            try{
+                const message: MessageDTO | undefined = await service.saveMessage(from, to, body);
+                io.to(room).emit('message', message)
+            }
+            catch(error) {
+                if( error instanceof ForbiddenException || 
+                    error instanceof PrismaClientKnownRequestError) {
+                    console.error(error.message)
+                }
+                console.log(error)
+                io.to(room).emit('message', null);
+            }
         })
     
         socket.on("connect_error", (err) => {

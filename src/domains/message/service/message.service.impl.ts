@@ -11,46 +11,26 @@ export class MessageServiceImpl implements MessageService {
                 private readonly followService: FollowService){}
 
     async loadChat(from: string, to: string): Promise<MessageDTO[]> {
-        try {
-            if(!from || !to) {
-                throw new ConflictException('PARAMETERS_ARE_UNDEFINED')
-            }
-            const senderIsFollowing: boolean = await this.followService.isFollowing(from, to);
-            const recieverIsFollowing: Boolean = await this.followService.isFollowing(to, from);
-            if(!senderIsFollowing || !recieverIsFollowing) {
-                throw new NotFoundException('message');
-            }
-            const messages = await this.repository.getMessages(from, to);
-            
-            return messages;
+        if(!from || !to) {
+            throw new ConflictException('PARAMETERS_ARE_UNDEFINED')
         }
-        catch(error) {
-            if( error instanceof NotFoundException || 
-                error instanceof ConflictException) {
-                console.error(error.message)
-            }
-            console.log(error)
-            return [];
+        const senderIsFollowing: boolean = await this.followService.isFollowing(from, to);
+        const recieverIsFollowing: Boolean = await this.followService.isFollowing(to, from);
+        if(!senderIsFollowing || !recieverIsFollowing) {
+            throw new NotFoundException('message');
         }
+        const messages = await this.repository.getMessages(from, to);
         
+        return messages;        
     }
 
-    async saveMessage(from: string, to: string, body: string): Promise<MessageDTO | undefined> {
-        try {
-            const senderIsFollowing: boolean = await this.followService.isFollowing(from, to);
-            const recieverIsFollowing: boolean = await this.followService.isFollowing(to, from);
-            if(!senderIsFollowing || !recieverIsFollowing) {
-                throw new ForbiddenException();
-            }
-            const message: MessageDTO = await this.repository.saveMessage(from, to, body);
-            return message;
+    async saveMessage(from: string, to: string, body: string): Promise<MessageDTO> {
+        const senderIsFollowing: boolean = await this.followService.isFollowing(from, to);
+        const recieverIsFollowing: boolean = await this.followService.isFollowing(to, from);
+        if(!senderIsFollowing || !recieverIsFollowing) {
+            throw new ForbiddenException();
         }
-        catch(error) {
-            if( error instanceof ForbiddenException || 
-                error instanceof PrismaClientKnownRequestError) {
-                console.error(error.message)
-            }
-            console.log(error)
-        }
+        const message: MessageDTO = await this.repository.saveMessage(from, to, body);
+        return message;
     }
 }

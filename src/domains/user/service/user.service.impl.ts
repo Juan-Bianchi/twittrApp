@@ -72,8 +72,8 @@ export class UserServiceImpl implements UserService {
         const client = new S3Client({ region });
         const command = new GetObjectCommand({ Bucket: bucket, Key: `${userId}/${imgName}` });
 
-        const imageURL: string = await getSignedUrl(client, command);
-        return this.repository.updateProfilePicture(userId, imageURL);
+        const imageURL: string = await getSignedUrl(client, command, { expiresIn: 3600 });
+        return this.repository.updateProfilePicture(userId, `${userId}/${imgName}`);
     }
     catch (err) {
       throw new ConflictException('NOT_ABLE_TO_RETRIEVE_SIGNED_URL')
