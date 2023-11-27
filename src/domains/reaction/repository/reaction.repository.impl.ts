@@ -5,11 +5,12 @@ import { ReactionRepository } from "./reaction.repository";
 export class ReactionRepositoryImpl implements ReactionRepository {
     constructor(private readonly db: PrismaClient){}
     
-    async getReactionByPostIdAndType(postId: string, type: ReactionType): Promise<ReactionDTO | null> {
+    async getReactionByPostIdUserIdAndType(postId: string, userId: string, type: ReactionType): Promise<ReactionDTO | null> {
         const reaction = await this.db.reaction.findFirst({
             where: {
                 postId: postId,
                 type: type,
+                userId
             }
         })
         if(!reaction) {

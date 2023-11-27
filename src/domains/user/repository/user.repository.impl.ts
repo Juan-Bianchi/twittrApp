@@ -43,7 +43,7 @@ export class UserRepositoryImpl implements UserRepository {
     if(user) {
       if(!user.hasPrivateProfile ||
          user.id.includes(userId) ||
-         user.followers?.some(someUser => someUser.followerId.includes(userId))) {
+         user.followers.some(follow => follow.followerId.includes(userId))) {
           
         return new UserViewDTO(user)
       }
@@ -60,12 +60,13 @@ export class UserRepositoryImpl implements UserRepository {
     return user ? new UserViewDTO(user) : null
   }
 
-  async delete (userId: any): Promise<void> {
-    await this.db.user.delete({
+  async delete (userId: any): Promise<UserDTO> {
+    const user = await this.db.user.delete({
       where: {
         id: userId
       }
     })
+    return new UserDTO(user);
   }
 
   async getRecommendedUsersPaginated (userId: string, options: OffsetPagination): Promise<UserDTO[]> {
