@@ -1,8 +1,5 @@
 import { Message } from '@prisma/client';
 import { Context, MockContext, createMockContext } from '../../../context';
-import { FollowDTO, FollowInputDTO } from '@domains/follow/dto';
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { NotFoundException } from '@utils';
 import { MessageRepository, MessageRepositoryImpl } from '@domains/message/repository';
 import { MessageDTO } from '@domains/message/dto';
 
@@ -33,7 +30,7 @@ beforeEach(() => {
 
 
 describe('saveMessage', ()=> {
-    it('should get th id of follow relationship by follower id and followed id', async () => {
+    it('should save a new message', async () => {
         expect.assertions(1);
 
         mockCtx.prisma.message.create.mockResolvedValue(message1);

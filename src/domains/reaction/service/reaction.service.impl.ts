@@ -22,9 +22,6 @@ export class ReactionServiceImpl implements ReactionService {
         if(!post) {
             throw new NotFoundException('post');
         }
-        if(reactionCreation.type !== 'LIKE' && reactionCreation.type !== 'RETWEET') {
-            throw new ConflictException('REACTION_TYPE_NOT_VALID');
-        }
         const previousReaction = await this.reactionRep.getReactionByPostIdAndUserId(reactionCreation.postId, reactionCreation.userId);
         if(previousReaction) {
             throw new ConflictException('USER_HAS_ALREADY_REACTED_TO_THIS_POST');

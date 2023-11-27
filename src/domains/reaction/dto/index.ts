@@ -17,11 +17,8 @@ export class ReactionDTO {
 export class ReactionInputDTO {
     @IsString()
     @IsIn(['LIKE', 'RETWEET'])
-    type: keyof typeof ReactionType;
+    type!: keyof typeof ReactionType;
 
-    constructor(type: ReactionType) {
-        this.type = type;
-    }
 }
 
 export class ReactionCreationDTO {

@@ -42,12 +42,6 @@ export class ConflictException extends HttpException {
   }
 }
 
-export class PrivateProfileException extends HttpException {
-  constructor () {
-    super(HttpStatus.FORBIDDEN, 'You are trying to access a private profile and not following the user.')
-  }
-}
-
 export function ErrorHandling (error: Error, req: Request, res: Response, next: NextFunction): Response {
   if (!error) next(error) // TODO How should I fix EsLint here?
   if (error instanceof HttpException) {

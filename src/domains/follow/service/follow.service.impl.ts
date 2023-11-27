@@ -2,7 +2,7 @@ import { FollowDTO, FollowInputDTO } from "../dto";
 import { FollowRepository } from "../repository";
 import { FollowService } from "./follow.service";
 import { UserRepository } from "@domains/user/repository";
-import { UserDTO, UserViewDTO } from "@domains/user/dto";
+import {  UserViewDTO } from "@domains/user/dto";
 import { ConflictException, NotFoundException } from "@utils";
 
 

@@ -3,7 +3,6 @@ import { MessageRepository } from "../repository";
 import { FollowService } from "@domains/follow/service";
 import { ConflictException, ForbiddenException, NotFoundException } from "@utils";
 import { MessageDTO } from "../dto";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 
 export class MessageServiceImpl implements MessageService {
@@ -25,6 +24,9 @@ export class MessageServiceImpl implements MessageService {
     }
 
     async saveMessage(from: string, to: string, body: string): Promise<MessageDTO> {
+        if(!from || !to || !body) {
+            throw new ConflictException('PARAMETERS_ARE_UNDEFINED')
+        }
         const senderIsFollowing: boolean = await this.followService.isFollowing(from, to);
         const recieverIsFollowing: boolean = await this.followService.isFollowing(to, from);
         if(!senderIsFollowing || !recieverIsFollowing) {

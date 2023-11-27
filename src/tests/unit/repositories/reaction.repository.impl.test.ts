@@ -9,7 +9,6 @@ let mockCtx: MockContext
 let ctx: Context
 let reaction1: Reaction;
 let reaction2: Reaction;
-let reaction3: Reaction;
 
 beforeEach(() => {
     mockCtx = createMockContext()
