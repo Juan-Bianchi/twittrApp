@@ -1,4 +1,4 @@
-import { PrismaClient, ReactionType } from '@prisma/client'
+import { Post, PrismaClient, ReactionType } from '@prisma/client'
 
 import { CursorPagination } from '@types'
 
@@ -21,12 +21,12 @@ export class CommentRepositoryImpl implements CommentRepository {
   }
 
     
-  async delete (postId: string): Promise<void> {
-    await this.db.post.delete({
+  async delete (postId: string): Promise<PostDTO> {
+    return await this.db.post.delete({
       where: {
         id: postId
       }
-    })
+    }).then(comment => new PostDTO(comment))
   }
 
   async getById (postId: string, userId: string): Promise<PostDTO | null> {
