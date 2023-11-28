@@ -8,6 +8,6 @@ export interface UserService {
   getPublicOrFollowedUser (userId: string, otherUserId: string): Promise<UserViewDTO | null>
   getUserRecommendations: (userId: any, options: OffsetPagination) => Promise<UserDTO[]>
   getPreSignedURL(imgName: string, userId: string): Promise<string>
-  updateUserProfilePicture: (imgName: string, userId: string) => Promise<UserDTO>
+  updateUserProfilePicture: (imgName: string, userId: string) => Promise<string>
   getByUsernameCursorPaginated: (username: string, options: CursorPagination) => Promise<UserViewDTO[]>
 }

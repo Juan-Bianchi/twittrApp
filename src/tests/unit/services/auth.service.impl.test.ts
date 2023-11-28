@@ -1,11 +1,8 @@
-import { Follow, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { Context, MockContext, createMockContext } from '../../../context';
-import { FollowRepository, FollowRepositoryImpl } from '@domains/follow/repository';
-import { FollowDTO } from '@domains/follow/dto';
 import { ConflictException, NotFoundException, UnauthorizedException } from '@utils';
-import { FollowService, FollowServiceImpl } from '@domains/follow/service';
 import { UserRepository, UserRepositoryImpl } from '@domains/user/repository';
-import { ExtendedUserDTO, UserDTO, UserViewDTO } from '@domains/user/dto';
+import { ExtendedUserDTO, UserDTO } from '@domains/user/dto';
 import { AuthService, AuthServiceImpl } from '@domains/auth/service';
 import { SignupInputDTO } from '@domains/auth/dto';
 

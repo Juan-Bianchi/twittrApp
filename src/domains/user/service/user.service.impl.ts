@@ -67,7 +67,7 @@ export class UserServiceImpl implements UserService {
     }
   }
 
-  async updateUserProfilePicture(imgName: string, userId: string): Promise<UserDTO> {
+  async updateUserProfilePicture(imgName: string, userId: string): Promise<string> {
     const region: string = "us-east-2"
     const bucket: string = "twittr-bucket"
     
@@ -79,7 +79,8 @@ export class UserServiceImpl implements UserService {
         const command = new GetObjectCommand({ Bucket: bucket, Key: `${userId}/${imgName}` });
 
         const imageURL: string = await getSignedUrl(client, command, { expiresIn: 3600 });
-        return this.repository.updateProfilePicture(userId, `${userId}/${imgName}`);
+        this.repository.updateProfilePicture(userId, `${userId}/${imgName}`);
+        return imageURL;
     }
     catch (err) {
       throw new ConflictException('NOT_ABLE_TO_RETRIEVE_SIGNED_URL')

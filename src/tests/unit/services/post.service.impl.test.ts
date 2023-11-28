@@ -14,7 +14,6 @@ let userMockRepository: UserRepository;
 let mockCtx: MockContext
 let ctx: Context
 let post1: Post;
-let post2: Post;
 let post3: any;
 let user: User;
 let post: Post;
@@ -28,16 +27,6 @@ beforeEach(() => {
     service = new PostServiceImpl(mockRepository, userMockRepository)
     post1 = { id: '921cce9e-cfe6-4636-a0ca-9df133d38527',
         authorId: '3ac84483-20f1-47f3-8be1-43ab2db46ad0',
-        content: 'this is another test twitt.',
-        images: [],
-        createdAt: new Date('2023-11-18 20:01:44.733'),
-        updatedAt: new Date('2023-11-18 19:59:59.701'),
-        deletedAt: null,
-        isAComment: false,
-        postCommentedId: null
-    }
-    post2 = { id: '30eed46e-294e-4547-ae37-749728575bda',
-        authorId: '3ebbfea7-3ae5-411c-aae8-049ff04db067',
         content: 'this is another test twitt.',
         images: [],
         createdAt: new Date('2023-11-18 20:01:44.733'),
@@ -126,7 +115,7 @@ describe('getPost', ()=> {
         jest.spyOn(mockRepository, 'getById').mockResolvedValue(new PostDTO(post));
         const expected = new PostDTO(post1)
         const recieved = await service.getPost('3ac84483-20f1-47f3-8be1-43ab2db46ad0', 'f1989782-88f9-4055-99fc-135611c1992a')
-        
+
         expect(recieved).toEqual(expected)
     });
 

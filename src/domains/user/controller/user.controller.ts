@@ -365,7 +365,7 @@ userRouter.get('/by_username/:username', async (req: Request, res: Response) => 
   const limit: number = Number(limitString);
 
   const users: UserViewDTO[] = await service.getByUsernameCursorPaginated(username, { limit, before, after });
-  
+
   return res.status(HttpStatus.OK).json(users);
 })
 
@@ -390,7 +390,7 @@ userRouter.post('/profilePicture', BodyValidation(ProfilePictureNameDTO), async(
   const { name } = req.body;
   const { userId } = res.locals.context;
 
-  const user: UserDTO = await service.updateUserProfilePicture(name, userId);
+  const url: string = await service.updateUserProfilePicture(name, userId);
 
-  return res.status(HttpStatus.OK).json(user);
+  return res.status(HttpStatus.OK).json(url);
 })
