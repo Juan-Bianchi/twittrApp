@@ -16,12 +16,11 @@ export class FollowServiceImpl implements FollowService {
             throw new NotFoundException('user');
         }
         const id: string | null = await this.followRep.getFollowId(followerId, followedId)
-        if(!id) {
-            throw new NotFoundException('follow')
-        }
-        let follow: FollowDTO | null = await this.followRep.getFollowById(id) as FollowDTO;
-        if(!follow.deletedAt){
-            throw new ConflictException('ALREADY_FOLLOWING_USER')
+        if(id) {
+            let follow: FollowDTO | null = await this.followRep.getFollowById(id) as FollowDTO;
+            if(!follow.deletedAt){
+                throw new ConflictException('ALREADY_FOLLOWING_USER')
+            }
         }
         const followInput: FollowInputDTO = new FollowInputDTO(followerId, followedId)
 

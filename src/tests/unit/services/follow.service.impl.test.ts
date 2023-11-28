@@ -72,14 +72,6 @@ describe('followUser', ()=> {
         await expect(service.followUser('83538af2-24e4-4435-bc36-a049183828d8', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')).rejects.toThrow(NotFoundException)
     });
 
-    it('should throw an exception if there not a follow relationship', async () => {
-        expect.assertions(1);
-        
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user))
-        jest.spyOn(mockRepository, 'getFollowId').mockResolvedValue(null)
-        await expect(service.followUser('83538af2-24e4-4435-bc36-a049183828d8', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')).rejects.toThrow(NotFoundException)
-    });
-
     it('should throw an exception if there user is already following', async () => {
         expect.assertions(1);
         

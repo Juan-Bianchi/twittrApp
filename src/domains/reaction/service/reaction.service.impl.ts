@@ -67,12 +67,12 @@ export class ReactionServiceImpl implements ReactionService {
         if(!post) {
             throw new NotFoundException('post')
         }
-        if(!post.authorId.includes(userId)) {
-            throw new ForbiddenException();
-        }
         const reaction: ReactionDTO | null= await this.reactionRep.getReactionByPostIdUserIdAndType(postId, userId, type);
         if(!reaction || !reaction.id) {
             throw new NotFoundException('reaction')
+        }
+        if(!reaction.userId.includes(userId)) {
+            throw new ForbiddenException();
         }
         
         return this.reactionRep.deleteReaction(reaction.id);

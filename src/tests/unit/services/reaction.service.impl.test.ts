@@ -32,7 +32,7 @@ beforeEach(() => {
     service = new ReactionServiceImpl(mockRepository, userMockRepository, postMockRepository)
     reaction1 = { id: '3cdb42b2-c12f-4bdd-bf45-1143033898fb',
         postId: '921cce9e-cfe6-4636-a0ca-9df133d38527',
-        userId: '83538af2-24e4-4435-bc36-a049183828d8',
+        userId: '3ac84483-20f1-47f3-8be1-43ab2db46ad0',
         type: 'LIKE',
     }
     reaction2 = { id: '3cdb42b2-c12f-4bdd-bf45-114303389888',
@@ -98,11 +98,12 @@ describe('deleteReaction', ()=> {
         await expect(service.deleteReaction('3cdb42b2-c12f-4bdd-bf45-1143033898fb', '3ac84483-20f1-47f3-8be1-43ab2db46ad0', 'LIKE')).rejects.toThrow(NotFoundException)
     });
 
-    it('should throw an exception if user is not the owner of the post', async () => {
+    it('should throw an exception if user is not the owner of the reaction', async () => {
         expect.assertions(1);
         
         jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
         jest.spyOn(postMockRepository, 'getById').mockResolvedValue(new PostDTO(post));
+        jest.spyOn(mockRepository, 'getReactionByPostIdUserIdAndType').mockResolvedValue(reaction1)
         await expect(service.deleteReaction('3cdb42b2-c12f-4bdd-bf45-1143033898fb', 'wrong', 'LIKE')).rejects.toThrow(ForbiddenException)
     });
 

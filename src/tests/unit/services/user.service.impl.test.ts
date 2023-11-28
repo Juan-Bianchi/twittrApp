@@ -1,6 +1,6 @@
 import { User } from '@prisma/client';
 import { UserRepository, UserRepositoryImpl } from '@domains/user/repository';
-import {  UserDTO, UserViewDTO } from '@domains/user/dto';
+import { UserDTO, UserViewDTO } from '@domains/user/dto';
 import { Context, MockContext, createMockContext } from '../../../context';
 import { UserService, UserServiceImpl } from '@domains/user/service';
 import { ConflictException, NotFoundException } from '@utils';

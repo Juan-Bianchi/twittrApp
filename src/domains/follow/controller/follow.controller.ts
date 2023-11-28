@@ -200,7 +200,7 @@ followRouter.patch('/unfollow/:user_id', async (req:Request, res: Response) => {
     const unfollowed: FollowDTO = await followService.unfollowUser(followerID, followedID);
 
     res.status(HttpStatus.ACCEPTED).json(unfollowed);
-} )
+})
 
 
 

@@ -11,7 +11,6 @@ import { ConflictException } from "../../../utils/errors";
 export class UserServiceImpl implements UserService {
   constructor (private readonly repository: UserRepository) {}
 
-
   async getByUsernameCursorPaginated (username: string, options: CursorPagination): Promise<UserViewDTO[]> {
     
     return await this.repository.getByUsernameCursorPaginated(username, options);
