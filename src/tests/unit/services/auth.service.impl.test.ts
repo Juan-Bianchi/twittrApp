@@ -5,10 +5,8 @@ import { FollowDTO } from '@domains/follow/dto';
 import { ConflictException, NotFoundException, UnauthorizedException } from '@utils';
 import { FollowService, FollowServiceImpl } from '@domains/follow/service';
 import { UserRepository, UserRepositoryImpl } from '@domains/user/repository';
-import { ExtendedUserDTO, UserViewDTO } from '@domains/user/dto';
+import { ExtendedUserDTO, UserDTO, UserViewDTO } from '@domains/user/dto';
 import { AuthService, AuthServiceImpl } from '@domains/auth/service';
-import { encryptPassword, generateAccessToken } from '../../../utils/auth'
-import exp from 'constants';
 import { SignupInputDTO } from '@domains/auth/dto';
 
 let userMockRepository: UserRepository;
@@ -50,7 +48,7 @@ describe('signup', ()=> {
     it('should register a new user', async () => {
       
         jest.spyOn(userMockRepository, 'getByEmailOrUsername').mockResolvedValue(null)        
-        jest.spyOn(userMockRepository, 'create').mockResolvedValue(user)
+        jest.spyOn(userMockRepository, 'create').mockResolvedValue(new UserDTO(user))
 
         const result = await service.signup(signupData);
         expect(result.token).toBeDefined();
@@ -59,7 +57,7 @@ describe('signup', ()=> {
     it('should throw an exception if username or email have been already used', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getByEmailOrUsername').mockResolvedValue(user) 
+        jest.spyOn(userMockRepository, 'getByEmailOrUsername').mockResolvedValue(new ExtendedUserDTO(user)) 
         await expect(service.signup(signupData)).rejects.toThrow(ConflictException)
     });
 
@@ -69,7 +67,7 @@ describe('signup', ()=> {
 describe('login', ()=> {
     it('should login a user', async () => {
       
-        jest.spyOn(userMockRepository, 'getByEmailOrUsername').mockResolvedValue(user)
+        jest.spyOn(userMockRepository, 'getByEmailOrUsername').mockResolvedValue(new ExtendedUserDTO(user))
 
         const result = await service.login(signupData);
         expect(result.token).toBeDefined();
@@ -85,7 +83,7 @@ describe('login', ()=> {
     it('should throw an exception if password is not correct', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getByEmailOrUsername').mockResolvedValue( {...user, password: 'wrong'}) 
+        jest.spyOn(userMockRepository, 'getByEmailOrUsername').mockResolvedValue( {...new ExtendedUserDTO(user), password: 'wrong'}) 
         await expect(service.login(signupData)).rejects.toThrow(UnauthorizedException)
     });
 

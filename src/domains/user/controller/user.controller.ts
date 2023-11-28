@@ -365,7 +365,7 @@ userRouter.get('/by_username/:username', async (req: Request, res: Response) => 
   const limit: number = Number(limitString);
 
   const users: UserViewDTO[] = await service.getByUsernameCursorPaginated(username, { limit, before, after });
-
+  
   return res.status(HttpStatus.OK).json(users);
 })
 

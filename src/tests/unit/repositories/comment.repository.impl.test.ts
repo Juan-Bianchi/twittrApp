@@ -123,7 +123,7 @@ describe('delete', ()=> {
 
 
 describe('getByAuthorId', ()=> {
-    it('should get all post, by author id', async () => {
+    it('should get all comments, by author id', async () => {
         expect.assertions(2);
 
         mockCtx.prisma.post.findMany.mockResolvedValue([comment1, comment2]);
@@ -163,7 +163,7 @@ describe('getByPostIdCursorPaginated', ()=> {
         expect(recieved[0].id).toEqual(expected[0].id)
     });
 
-    it('should get all posts, paginated and ordered by id ASC', async () => {
+    it('should get all comments, paginated and ordered by id ASC', async () => {
         expect.assertions(2);
         let comments: Post[] = [];
         for(let i = 0; i < 5; i++) {
@@ -190,7 +190,7 @@ describe('getByPostIdCursorPaginated', ()=> {
         expect(recieved[0].id).toEqual(expected[0].id)
     })
 
-    it('should get all posts by username, paginated and ordered by id DESC', async () => {
+    it('should get all comments by username, paginated and ordered by id DESC', async () => {
         expect.assertions(2);
         let comments: Post[] = [];
         for(let i = 6; i > 1; i--) {

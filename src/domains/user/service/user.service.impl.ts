@@ -52,6 +52,9 @@ export class UserServiceImpl implements UserService {
     const bucket: string = "twittr-bucket"
 
     try {
+        if(!imgName) {
+          throw new ConflictException()
+        }
         const client = new S3Client({ region });
         const command = new PutObjectCommand({ Bucket: bucket, Key: `${userId}/${imgName}` });
 
@@ -69,6 +72,9 @@ export class UserServiceImpl implements UserService {
     const bucket: string = "twittr-bucket"
     
     try {
+        if(!imgName) {
+          throw new ConflictException()
+        }
         const client = new S3Client({ region });
         const command = new GetObjectCommand({ Bucket: bucket, Key: `${userId}/${imgName}` });
 

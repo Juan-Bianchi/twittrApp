@@ -6,6 +6,8 @@ import { UserRepository, UserRepositoryImpl } from '@domains/user/repository';
 import { PostRepository, PostRepositoryImpl } from '@domains/post/repository';
 import { ReactionService, ReactionServiceImpl } from '@domains/reaction/service';
 import { ConflictException, ForbiddenException, NotFoundException } from '@utils';
+import { UserViewDTO } from '@domains/user/dto';
+import { PostDTO } from '@domains/post/dto';
 
 let mockRepository: ReactionRepository;
 let userMockRepository: UserRepository;
@@ -72,8 +74,8 @@ describe('deleteReaction', ()=> {
     it('should delete a reaction given a reaction id', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(user);
-        jest.spyOn(postMockRepository, 'getById').mockResolvedValue(post);
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
+        jest.spyOn(postMockRepository, 'getById').mockResolvedValue(new PostDTO(post));
         jest.spyOn(mockRepository, 'getReactionByPostIdUserIdAndType').mockResolvedValue(reaction1)
         jest.spyOn(mockRepository, 'deleteReaction').mockResolvedValue(reaction1)
         const expected = new ReactionDTO(reaction1);
@@ -91,7 +93,7 @@ describe('deleteReaction', ()=> {
     it('should throw an exception if post id is not correct', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(user);
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
         jest.spyOn(postMockRepository, 'getById').mockResolvedValue(null);
         await expect(service.deleteReaction('3cdb42b2-c12f-4bdd-bf45-1143033898fb', '3ac84483-20f1-47f3-8be1-43ab2db46ad0', 'LIKE')).rejects.toThrow(NotFoundException)
     });
@@ -99,16 +101,16 @@ describe('deleteReaction', ()=> {
     it('should throw an exception if user is not the owner of the post', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(user);
-        jest.spyOn(postMockRepository, 'getById').mockResolvedValue(post);
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
+        jest.spyOn(postMockRepository, 'getById').mockResolvedValue(new PostDTO(post));
         await expect(service.deleteReaction('3cdb42b2-c12f-4bdd-bf45-1143033898fb', 'wrong', 'LIKE')).rejects.toThrow(ForbiddenException)
     });
 
     it('should throw an exception if reaction does not exist', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(user);
-        jest.spyOn(postMockRepository, 'getById').mockResolvedValue(post);
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
+        jest.spyOn(postMockRepository, 'getById').mockResolvedValue(new PostDTO(post));
         jest.spyOn(mockRepository, 'getReactionByPostIdUserIdAndType').mockResolvedValue(null)
         await expect(service.deleteReaction('3cdb42b2-c12f-4bdd-bf45-1143033898fb', '3ac84483-20f1-47f3-8be1-43ab2db46ad0', 'LIKE')).rejects.toThrow(NotFoundException)
     });
@@ -119,8 +121,8 @@ describe('createReaction', ()=> {
     it('should create a reaction', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(user);
-        jest.spyOn(postMockRepository, 'getById').mockResolvedValue(post);
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
+        jest.spyOn(postMockRepository, 'getById').mockResolvedValue(new PostDTO(post));
         jest.spyOn(mockRepository, 'getReactionByPostIdAndUserId').mockResolvedValue(null)
         jest.spyOn(mockRepository, 'createReaction').mockResolvedValue(reaction1)
         const expected = new ReactionDTO(reaction1);
@@ -138,7 +140,7 @@ describe('createReaction', ()=> {
     it('should throw an exception if post id is not correct', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(user);
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
         jest.spyOn(postMockRepository, 'getById').mockResolvedValue(null);
         await expect(service.createReaction(reactionCreation)).rejects.toThrow(NotFoundException)
     });
@@ -146,8 +148,8 @@ describe('createReaction', ()=> {
     it('should throw an exception if post id is not correct', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(user);
-        jest.spyOn(postMockRepository, 'getById').mockResolvedValue(post);
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
+        jest.spyOn(postMockRepository, 'getById').mockResolvedValue(new PostDTO(post));
         jest.spyOn(mockRepository, 'getReactionByPostIdAndUserId').mockResolvedValue(reaction1)
         await expect(service.createReaction(reactionCreation)).rejects.toThrow(ConflictException)
     });
@@ -159,7 +161,7 @@ describe('getRetweetsByUserId', ()=> {
     it('should get all retweets by user id', async () => {
         expect.assertions(2);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(user);
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
         jest.spyOn(mockRepository, 'getReactionsByUserId').mockResolvedValue([reaction1, reaction2])
         const expected = [new ReactionDTO(reaction2)];
         const recieved = await service.getRetweetsByUserId('83538af2-24e4-4435-bc36-a049183828d8')
@@ -177,7 +179,7 @@ describe('getRetweetsByUserId', ()=> {
     it('should throw an exception if the user has not made any reaction of the given type', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(user);
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
         jest.spyOn(mockRepository, 'getReactionsByUserId').mockResolvedValue([])
         await expect(service.getRetweetsByUserId('83538af2-24e4-4435-bc36-a049183828d8')).rejects.toThrow(NotFoundException)
     });
@@ -189,7 +191,7 @@ describe('getLikesByUserId', ()=> {
     it('should get all retweets by user id', async () => {
         expect.assertions(2);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(user);
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
         jest.spyOn(mockRepository, 'getReactionsByUserId').mockResolvedValue([reaction1, reaction2])
         const expected = [new ReactionDTO(reaction1)];
         const recieved = await service.getLikesByUserId('83538af2-24e4-4435-bc36-a049183828d8')
@@ -207,7 +209,7 @@ describe('getLikesByUserId', ()=> {
     it('should throw an exception if the user has not made any reaction of the given type', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(user);
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
         jest.spyOn(mockRepository, 'getReactionsByUserId').mockResolvedValue([])
         await expect(service.getLikesByUserId('83538af2-24e4-4435-bc36-a049183828d8')).rejects.toThrow(NotFoundException)
     });

@@ -42,6 +42,10 @@ export class CommentServiceImpl implements CommentService {
 
 
     async getCommentByPostIdCursorPaginated (postCommentedId: string, userId: string, options: CursorPagination): Promise<ExtendedPostDTO[]> {
+        const post = await this.postRep.getById(postCommentedId, userId);
+        if(!post) {
+            throw new NotFoundException('post')
+        }
         const comments: ExtendedPostDTO[] = await this.repository.getByPostIdCursorPaginated(postCommentedId, userId, options);
         if(!comments.length) {
             throw new NotFoundException('comments')
@@ -64,7 +68,7 @@ export class CommentServiceImpl implements CommentService {
 
     async deleteComment(userId: string, commentId: string): Promise<void> {
         const comment = await this.repository.getById(commentId, userId)
-        if (!comment) throw new NotFoundException('post')
+        if (!comment) throw new NotFoundException('comment')
         if (comment.authorId !== userId) throw new ForbiddenException()
         await this.repository.delete(commentId)
     }

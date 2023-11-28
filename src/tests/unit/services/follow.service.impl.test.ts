@@ -58,7 +58,7 @@ describe('followUser', ()=> {
         jest.spyOn(mockRepository, 'followUser').mockResolvedValue(new FollowDTO(follow1))
         jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user))
         jest.spyOn(mockRepository, 'getFollowId').mockResolvedValue('23e0ee80-5b2b-4dd7-b31d-80a91156ae95')
-        jest.spyOn(mockRepository, 'getFollowById').mockResolvedValue(follow1)
+        jest.spyOn(mockRepository, 'getFollowById').mockResolvedValue(new FollowDTO(follow1))
         const expected = new FollowDTO(follow1);
         const recieved = await service.followUser('83538af2-24e4-4435-bc36-a049183828d8', '3ac84483-20f1-47f3-8be1-43ab2db46ad0',)
         expect(expected.id).toEqual(recieved.id)
@@ -85,7 +85,7 @@ describe('followUser', ()=> {
         
         jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user))
         jest.spyOn(mockRepository, 'getFollowId').mockResolvedValue('23e0ee80-5b2b-4dd7-b31d-80a91156ae95')
-        jest.spyOn(mockRepository, 'getFollowById').mockResolvedValue(follow2)
+        jest.spyOn(mockRepository, 'getFollowById').mockResolvedValue(new FollowDTO(follow2))
         await expect(service.followUser('83538af2-24e4-4435-bc36-a049183828d8', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')).rejects.toThrow(ConflictException)
     });
 })
@@ -124,7 +124,7 @@ describe('unfollowUser', ()=> {
         
         jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user))
         jest.spyOn(mockRepository, 'getFollowId').mockResolvedValue('23e0ee80-5b2b-4dd7-b31d-80a91156ae95')
-        jest.spyOn(mockRepository, 'getFollowById').mockResolvedValue(follow1)
+        jest.spyOn(mockRepository, 'getFollowById').mockResolvedValue(new FollowDTO(follow1))
         await expect(service.unfollowUser('83538af2-24e4-4435-bc36-a049183828d8', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')).rejects.toThrow(ConflictException)
     });
 })
