@@ -46,58 +46,53 @@ io.use((socket: SocketChat, next) => {
 })
 
 io.on('connection', (socket: SocketChat) => {
-    try {
-        console.log(`user: ${socket.userId} is connected`);
+    console.log(`user: ${socket.userId} is connected`);
 
-        socket.on('load chat', async (data) => {
-            const { from, to } = data;
-            const room: string = [from, to].sort().join('&&&&');
-            try {
-                console.log('loading chat')
-                const clientsInRoom = io.sockets.adapter.rooms.get(room);
-                console.log(clientsInRoom)
-                if (!clientsInRoom || !clientsInRoom.has(socket.id)) {
-                    socket.join(room);            
-                }
-                const messages: MessageDTO[] = await service.loadChat(from, to);
-                io.to(room).emit('allMessages', messages)
+    socket.on('load chat', async (data) => {
+        const { from, to } = data;
+        const room: string = [from, to].sort().join('&&&&');
+        try {
+            console.log('loading chat')
+            const clientsInRoom = io.sockets.adapter.rooms.get(room);
+            console.log(clientsInRoom)
+            if (!clientsInRoom || !clientsInRoom.has(socket.id)) {
+                socket.join(room);            
             }
-            catch(error) {
-                if( error instanceof NotFoundException || 
-                    error instanceof ConflictException ) {
-                        console.error(error.message)
-                }
-                console.log(error)
-                io.to(room).emit('allMessages', [])
-            } 
-        })
-    
-        socket.on('chat message', async (data) => {
-            const { from, to, body } = data
-            const room: string = [from, to].sort().join('&&&&');
-            try{
-                const message: MessageDTO | undefined = await service.saveMessage(from, to, body);
-                io.to(room).emit('message', message)
-            }
-            catch(error) {
-                if( error instanceof ForbiddenException || 
-                    error instanceof PrismaClientKnownRequestError) {
+            const messages: MessageDTO[] = await service.loadChat(from, to);
+            io.to(room).emit('allMessages', messages)
+        }
+        catch(error) {
+            if( error instanceof NotFoundException || 
+                error instanceof ConflictException ) {
                     console.error(error.message)
-                }
-                console.log(error)
-                io.to(room).emit('message', null);
             }
-        })
-    
-        socket.on("connect_error", (err) => {
-            console.log(err.message); // prints the message associated with the error
-        });
-    
-        socket.on('disconnect', () => {
-            console.log(`user: ${socket.userId} has left all rooms and has been disconnected`);
-        });
-    }
-    catch(error) {
-        socket.disconnect();
-    }
+            console.log(error)
+            io.to(room).emit('allMessages', [])
+        } 
+    })
+
+    socket.on('chat message', async (data) => {
+        const { from, to, body } = data
+        const room: string = [from, to].sort().join('&&&&');
+        try{
+            const message: MessageDTO | undefined = await service.saveMessage(from, to, body);
+            io.to(room).emit('message', message)
+        }
+        catch(error) {
+            if( error instanceof ForbiddenException || 
+                error instanceof PrismaClientKnownRequestError) {
+                console.error(error.message)
+            }
+            console.log(error)
+            io.to(room).emit('message', null);
+        }
+    })
+
+    socket.on("connect_error", (err) => {
+        console.log(err.message); // prints the message associated with the error
+    });
+
+    socket.on('disconnect', () => {
+        console.log(`user: ${socket.userId} has left all rooms and has been disconnected`);
+    });
 });
