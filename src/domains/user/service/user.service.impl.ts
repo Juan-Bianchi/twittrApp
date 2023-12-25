@@ -35,7 +35,7 @@ export class UserServiceImpl implements UserService {
     return user
   }
 
-  async getUserRecommendations (userId: any, options: OffsetPagination): Promise<UserDTO[]> {
+  async getUserRecommendations (userId: string, options: OffsetPagination): Promise<UserDTO[]> {
     const users = await this.repository.getRecommendedUsersPaginated(userId, options)
     if (!users.length) throw new NotFoundException('user')
 
@@ -46,9 +46,9 @@ export class UserServiceImpl implements UserService {
     await this.repository.delete(userId)
   }
 
-  async getPreSignedURL(imgName: string, userId: string): Promise<string> {
-    const region: string = "us-east-2"
-    const bucket: string = "twittr-bucket"
+  async getPreSignedPutURL(imgName: string, userId: string): Promise<string> {
+    const region = process.env.AWS_REGION
+    const bucket = process.env.AWS_BUCKET
 
     try {
         if(!imgName) {
@@ -66,9 +66,29 @@ export class UserServiceImpl implements UserService {
     }
   }
 
+  async getPreSignedGetURL(imgName: string, userId: string): Promise<string> {
+    const region = process.env.AWS_REGION
+    const bucket = process.env.AWS_BUCKET
+
+    try {
+        if(!imgName) {
+          throw new ConflictException()
+        }
+        const client = new S3Client({ region });
+        const command = new GetObjectCommand({ Bucket: bucket, Key: `${userId}/${imgName}` });
+
+        const clientUrl:string = await getSignedUrl(client, command, { expiresIn: 3600 });
+
+        return clientUrl;
+    } 
+    catch (err) {
+        throw new ConflictException('NOT_ABLE_TO_CREATE_PRESIGNED_URL')
+    }
+  }
+
   async updateUserProfilePicture(imgName: string, userId: string): Promise<string> {
-    const region: string = "us-east-2"
-    const bucket: string = "twittr-bucket"
+    const region = process.env.AWS_REGION
+    const bucket = process.env.AWS_BUCKET
     
     try {
         if(!imgName) {

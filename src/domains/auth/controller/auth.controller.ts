@@ -178,8 +178,13 @@ authRouter.post('/signup', BodyValidation(SignupInputDTO), async (req: Request, 
 
 authRouter.post('/login', BodyValidation(LoginInputDTO), async (req: Request, res: Response) => {
   const data = req.body
-
+  console.log('logging')
   const token = await service.login(data)
 
+  return res.status(HttpStatus.OK).json(token)
+})
+
+authRouter.post('/validate', (req: Request, res: Response) => {
+  const [_bearer, token] = (req.headers.authorization)?.split(' ') ?? []
   return res.status(HttpStatus.OK).json(token)
 })

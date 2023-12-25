@@ -68,7 +68,7 @@ io.on('connection', (socket: SocketChat) => {
             }
             console.log(error)
             io.to(room).emit('allMessages', [])
-        } 
+        }
     })
 
     socket.on('chat message', async (data) => {

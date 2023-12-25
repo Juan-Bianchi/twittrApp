@@ -21,7 +21,11 @@ export class UserRepositoryImpl implements UserRepository {
         {
           id: 'asc'
         }
-      ]
+      ],
+      include: {
+        followers: true,
+        follows: true
+      }
     }).then(users => users.map(user => new UserViewDTO(user)))
   }
 
@@ -37,7 +41,8 @@ export class UserRepositoryImpl implements UserRepository {
         id: otherUserId
       },
       include: {
-        followers: true
+        followers: true,
+        follows: true
       }
     })
     if(user) {
@@ -55,6 +60,10 @@ export class UserRepositoryImpl implements UserRepository {
     const user = await this.db.user.findUnique({
       where: {
         id: userId
+      },
+      include: {
+        follows: true,
+        followers: true,
       }
     })
     return user ? new UserViewDTO(user) : null
@@ -74,18 +83,20 @@ export class UserRepositoryImpl implements UserRepository {
       take: options.limit ? options.limit : undefined,
       skip: options.skip ? options.skip : undefined,
       where: {
-        OR: [
-          {
-            hasPrivateProfile: false
-          },
-          {
-            followers: {
-              some: {
-                id: userId
+        NOT: {
+          OR: [
+            {
+              followers: {
+                some: {
+                  followerId: userId 
+                }
               }
+            },
+            {
+              id: userId
             }
-          }
-        ]
+          ]
+        }
       },
       orderBy: [
         {
@@ -93,7 +104,7 @@ export class UserRepositoryImpl implements UserRepository {
         }
       ]
     })
-    return users.map(user => new UserDTO(user))
+    return users.map(user => new ExtendedUserDTO(user))
   }
 
   async getByEmailOrUsername (email?: string, username?: string): Promise<ExtendedUserDTO | null> {

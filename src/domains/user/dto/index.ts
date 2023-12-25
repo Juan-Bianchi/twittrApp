@@ -1,3 +1,4 @@
+import { FollowDTO } from "@domains/follow/dto"
 import { IsBoolean, IsString } from "class-validator"
 
 
@@ -37,6 +38,8 @@ export class UserViewDTO {
     this.username = user.username
     this.hasPrivateProfile = user.hasPrivateProfile
     this.profilePicture = user.profilePicture
+    this.followers = user.followers
+    this.follows = user.follows
   }
 
   id: string
@@ -44,6 +47,8 @@ export class UserViewDTO {
   username: string
   hasPrivateProfile: boolean
   profilePicture: string | null
+  follows!: FollowDTO[]
+  followers!: FollowDTO[]
 }
 
 export class ChangePrivacyInputDTO {

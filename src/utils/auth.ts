@@ -13,7 +13,6 @@ export const generateAccessToken = (payload: Record<string, string | boolean | n
 export const withAuth = (req: Request, res: Response, next: () => any): void => {
   // Get the token from the authorization header
   const [bearer, token] = (req.headers.authorization)?.split(' ') ?? []
-
   // Verify that the Authorization header has the expected shape
   if (!bearer || !token || bearer !== 'Bearer') throw new UnauthorizedException('MISSING_TOKEN')
 
@@ -21,7 +20,6 @@ export const withAuth = (req: Request, res: Response, next: () => any): void => 
   jwt.verify(token, Constants.TOKEN_SECRET, (err, context) => {
     if (err) throw new UnauthorizedException('INVALID_TOKEN')
     res.locals.context = context
-
     next()
   })
 }

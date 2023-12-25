@@ -129,6 +129,8 @@ export class CommentRepositoryImpl implements CommentRepository {
           createdAt: post.createdAt,
           isAComment: post.isAComment,
           author: post.author,
+          comments: post.comments,
+          reactions: post.reactions,
           qtyComments: post.comments.length,
           qtyLikes: post.reactions.filter(react => react.type === ReactionType.LIKE).length,
           qtyRetweets: post.reactions.filter(react => react.type === ReactionType.RETWEET).length,

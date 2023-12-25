@@ -341,14 +341,34 @@ userRouter.get('/me', async (req: Request, res: Response) => {
   return res.status(HttpStatus.OK).json(user)
 })
 
+userRouter.get('/getPutSignedURL', async(req: Request, res: Response) => {
+  const { name } = req.body;
+  const { userId } = res.locals.context;
+
+  const url: string = await service.getPreSignedPutURL(name, userId);
+
+  return res.status(HttpStatus.CREATED).json(url);
+})
+
 userRouter.get('/getSignedURL', async(req: Request, res: Response) => {
   const { name } = req.body;
   const { userId } = res.locals.context;
 
-  const url: string = await service.getPreSignedURL(name, userId);
+  const url: string = await service.getPreSignedGetURL(name, userId);
 
   return res.status(HttpStatus.CREATED).json(url);
 })
+
+
+userRouter.get('/by_username', async (req: Request, res: Response) => {
+  const { limit: limitString, before, after, username } = req.query as Record<string, string>
+  const limit: number = Number(limitString);
+
+  const users: UserViewDTO[] = await service.getByUsernameCursorPaginated(username, { limit, before, after });
+
+  return res.status(HttpStatus.OK).json(users);
+})
+
 
 userRouter.get('/:userId', async (req: Request, res: Response) => {
   const { userId: otherUserId } = req.params
@@ -359,15 +379,6 @@ userRouter.get('/:userId', async (req: Request, res: Response) => {
   return res.status(HttpStatus.OK).json(user)
 })
 
-userRouter.get('/by_username/:username', async (req: Request, res: Response) => {
-  const { username } = req.params;
-  const { limit: limitString, before, after } = req.query as Record<string, string>
-  const limit: number = Number(limitString);
-
-  const users: UserViewDTO[] = await service.getByUsernameCursorPaginated(username, { limit, before, after });
-
-  return res.status(HttpStatus.OK).json(users);
-})
 
 userRouter.delete('/', async (req: Request, res: Response) => {
   const { userId } = res.locals.context

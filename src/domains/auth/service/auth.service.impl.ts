@@ -29,7 +29,6 @@ export class AuthServiceImpl implements AuthService {
   async login (data: LoginInputDTO): Promise<TokenDTO> {
     const user = await this.repository.getByEmailOrUsername(data.email, data.username)
     if (!user) throw new NotFoundException('user')
-
     const isCorrectPassword = await checkPassword(data.password, user.password)
 
     if (!isCorrectPassword) throw new UnauthorizedException('INCORRECT_PASSWORD')

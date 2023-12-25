@@ -12,6 +12,7 @@ import { commentRouter } from '@domains/comment'
 export const router = Router()
 
 router.use('/health', healthRouter)
+router.use('/auth/validate', withAuth, authRouter)
 router.use('/auth', authRouter)
 router.use('/follower', withAuth, followRouter)
 router.use('/user', withAuth, userRouter)
