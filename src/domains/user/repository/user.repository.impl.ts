@@ -7,11 +7,10 @@ import { UserRepository } from './user.repository'
 export class UserRepositoryImpl implements UserRepository {
   constructor (private readonly db: PrismaClient) {}
 
-  async getByUsernameCursorPaginated(username: string, options: CursorPagination) : Promise<UserViewDTO[]> {
+  async getByUsernameOffsetPaginated(username: string, options: OffsetPagination) : Promise<UserViewDTO[]> {
     return this.db.user.findMany({
-      cursor: options.after? { id: options.after }: options.before? { id: options.before }: undefined,
-      take: options.limit?(options.after? options.limit: -options.limit): undefined,
-      skip: options.after? 1: options.before? 1: undefined,
+      take: options.limit ? options.limit : undefined,
+      skip: options.skip ? options.skip : undefined,
       where: {
         username: {
           contains: username
@@ -88,7 +87,8 @@ export class UserRepositoryImpl implements UserRepository {
             {
               followers: {
                 some: {
-                  followerId: userId 
+                  followerId: userId,
+                  deletedAt: null
                 }
               }
             },

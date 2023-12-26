@@ -36,7 +36,8 @@ export class PostRepositoryImpl implements PostRepository {
             {
               followers: {
                 some: {
-                  followerId: userId
+                  followerId: userId,
+                  deletedAt: null
                 }
               }
             },
@@ -83,7 +84,7 @@ export class PostRepositoryImpl implements PostRepository {
     }).then(post => new PostDTO(post))
   }
 
-  async getById (postId: string, userId: string): Promise<PostDTO | null> {
+  async getById (postId: string, userId: string): Promise<ExtendedPostDTO | null> {
     const post = await this.db.post.findFirst({
       where: {
         id: postId,
@@ -95,7 +96,8 @@ export class PostRepositoryImpl implements PostRepository {
             {
               followers: {
                 some: {
-                  followerId: userId
+                  followerId: userId,
+                  deletedAt: null
                 }
               }
             },
@@ -103,11 +105,30 @@ export class PostRepositoryImpl implements PostRepository {
               id: userId, 
             }
           ]
-        }
-            
+        }      
       },
+      include: {
+        author: true,
+        comments: true,
+        reactions: true
+      } 
     })
-    return (post != null) ? new PostDTO(post) : null
+    return (post != null) ? new ExtendedPostDTO(
+      {
+        id: post.id,
+        authorId: post.authorId,
+        content: post.content,
+        images: post.images,
+        createdAt: post.createdAt,
+        isAComment: post.isAComment,
+        author: post.author,
+        comments: post.comments,
+        reactions: post.reactions,
+        qtyComments: post.comments.length,
+        qtyLikes: post.reactions.filter(react => react.type === ReactionType.LIKE).length,
+        qtyRetweets: post.reactions.filter(react => react.type === ReactionType.RETWEET).length,
+      }
+    ) : null
   }
 
   async getByAuthorId (authorId: string, userId: string): Promise<ExtendedPostDTO[]> {
@@ -123,7 +144,8 @@ export class PostRepositoryImpl implements PostRepository {
               {
                 followers: {
                   some: {
-                    followerId: userId
+                    followerId: userId,
+                    deletedAt: null,
                   }
                 }
               },

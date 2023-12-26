@@ -5,6 +5,6 @@ export interface PostRepository {
   create: (userId: string, data: CreatePostInputDTO) => Promise<PostDTO>
   getPublicOrFollowedByDatePaginated (options: CursorPagination, userId: string): Promise<ExtendedPostDTO[]>
   delete: (postId: string) => Promise<PostDTO>
-  getById: (postId: string, userId: string) => Promise<PostDTO | null>
+  getById: (postId: string, userId: string) => Promise<ExtendedPostDTO | null>
   getByAuthorId (authorId: string, userId: string): Promise<ExtendedPostDTO[]>
 }

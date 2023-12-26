@@ -361,10 +361,8 @@ userRouter.get('/getSignedURL', async(req: Request, res: Response) => {
 
 
 userRouter.get('/by_username', async (req: Request, res: Response) => {
-  const { limit: limitString, before, after, username } = req.query as Record<string, string>
-  const limit: number = Number(limitString);
-
-  const users: UserViewDTO[] = await service.getByUsernameCursorPaginated(username, { limit, before, after });
+  const { limit, skip, username } = req.query as Record<string, string>
+  const users: UserViewDTO[] = await service.getByUsernameOffsetPaginated(username, { limit: Number(limit), skip: Number(skip) });
 
   return res.status(HttpStatus.OK).json(users);
 })

@@ -11,9 +11,9 @@ import { ConflictException } from "../../../utils/errors";
 export class UserServiceImpl implements UserService {
   constructor (private readonly repository: UserRepository) {}
 
-  async getByUsernameCursorPaginated (username: string, options: CursorPagination): Promise<UserViewDTO[]> {
+  async getByUsernameOffsetPaginated (username: string, options: OffsetPagination): Promise<UserViewDTO[]> {
     
-    return await this.repository.getByUsernameCursorPaginated(username, options);
+    return await this.repository.getByUsernameOffsetPaginated(username, options);
   }
 
   async changeUserPrivacy(userId: string, hasPrivateProfile: boolean): Promise<UserDTO> {
@@ -37,8 +37,7 @@ export class UserServiceImpl implements UserService {
 
   async getUserRecommendations (userId: string, options: OffsetPagination): Promise<UserDTO[]> {
     const users = await this.repository.getRecommendedUsersPaginated(userId, options)
-    if (!users.length) throw new NotFoundException('user')
-
+    
     return users
   }
 

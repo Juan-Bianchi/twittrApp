@@ -42,7 +42,8 @@ export class CommentRepositoryImpl implements CommentRepository {
             {
               followers: {
                 some: {
-                  followerId: userId
+                  followerId: userId,
+                  deletedAt: null
                 }
               }
             },
@@ -70,7 +71,8 @@ export class CommentRepositoryImpl implements CommentRepository {
               {
                 followers: {
                   some: {
-                    followerId: userId
+                    followerId: userId,
+                    deletedAt: null
                   }
                 }
               },
@@ -100,7 +102,8 @@ export class CommentRepositoryImpl implements CommentRepository {
             {
               followers: {
                 some: {
-                  followerId: userId
+                  followerId: userId,
+                  deletedAt: null
                 }
               }
             },

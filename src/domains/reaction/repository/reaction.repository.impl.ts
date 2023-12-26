@@ -20,18 +20,15 @@ export class ReactionRepositoryImpl implements ReactionRepository {
         return new ReactionDTO(reaction);
     }
 
-    async getReactionByPostIdAndUserId(postId: string, userId: string): Promise<ReactionDTO | null> {
-        const reaction = await this.db.reaction.findFirst({
+    async getReactionByPostIdAndUserId(postId: string, userId: string): Promise<ReactionDTO[]> {
+        const reactions = await this.db.reaction.findMany({
             where: {
                 postId,
                 userId
             }
         })
-        if(!reaction) {
-            return reaction
-        }
 
-        return new ReactionDTO(reaction);
+        return reactions.map(reaction => new ReactionDTO(reaction));
     }
 
     async deleteReaction(reactionId: string): Promise<ReactionDTO>{

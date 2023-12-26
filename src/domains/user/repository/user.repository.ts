@@ -11,5 +11,5 @@ export interface UserRepository {
   getById: (userId: string) => Promise<UserViewDTO | null>
   getByEmailOrUsername: (email?: string, username?: string) => Promise<ExtendedUserDTO | null>
   updateProfilePicture: (userId: string, profilePicture: string)=> Promise<UserDTO>
-  getByUsernameCursorPaginated: (username: string, options: CursorPagination) => Promise<UserViewDTO[]>
+  getByUsernameOffsetPaginated: (username: string, options: OffsetPagination) => Promise<UserViewDTO[]>
 }

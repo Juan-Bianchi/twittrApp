@@ -23,7 +23,7 @@ export class PostServiceImpl implements PostService {
     await this.repository.delete(postId)
   }
 
-  async getPost (userId: string, postId: string): Promise<PostDTO> {
+  async getPost (userId: string, postId: string): Promise<ExtendedPostDTO> {
     const author: UserViewDTO | null= await this.userRep.getById(userId);
     if(!author) {
       throw new NotFoundException('user')
@@ -41,9 +41,7 @@ export class PostServiceImpl implements PostService {
       throw new NotFoundException('user')
     }
     const posts: ExtendedPostDTO[] = await this.repository.getPublicOrFollowedByDatePaginated(options, userId);
-    if(!posts.length){
-      throw new NotFoundException('posts');
-    } 
+
     return posts;
   }
 
@@ -53,9 +51,6 @@ export class PostServiceImpl implements PostService {
       throw new NotFoundException('user')
     }
     const posts: ExtendedPostDTO[] = await this.repository.getByAuthorId(authorId, userId);
-    if(!posts.length) {
-      throw new NotFoundException('posts')
-    }
 
     return posts;
   }

@@ -11,5 +11,5 @@ export interface UserService {
   getPreSignedGetURL(imgName: string, userId: string): string | PromiseLike<string>
   getPreSignedPutURL(imgName: string, userId: string): Promise<string>
   updateUserProfilePicture: (imgName: string, userId: string) => Promise<string>
-  getByUsernameCursorPaginated: (username: string, options: CursorPagination) => Promise<UserViewDTO[]>
+  getByUsernameOffsetPaginated: (username: string, options: OffsetPagination) => Promise<UserViewDTO[]>
 }

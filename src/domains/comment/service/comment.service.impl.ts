@@ -33,9 +33,6 @@ export class CommentServiceImpl implements CommentService {
             throw new NotFoundException('user')
         }
         const comments: PostDTO[] = await this.repository.getByAuthorId(authorId, userId);
-        if(!comments.length) {
-            throw new NotFoundException('comments')
-        }
 
         return comments;
     }
@@ -47,9 +44,6 @@ export class CommentServiceImpl implements CommentService {
             throw new NotFoundException('post')
         }
         const comments: ExtendedPostDTO[] = await this.repository.getByPostIdCursorPaginated(postCommentedId, userId, options);
-        if(!comments.length) {
-            throw new NotFoundException('comments')
-        }
 
         return comments;
     }

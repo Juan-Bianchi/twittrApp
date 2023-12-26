@@ -22,7 +22,7 @@ export class ReactionServiceImpl implements ReactionService {
         if(!post) {
             throw new NotFoundException('post');
         }
-        const previousReaction = await this.reactionRep.getReactionByPostIdAndUserId(reactionCreation.postId, reactionCreation.userId);
+        const previousReaction = await this.reactionRep.getReactionByPostIdUserIdAndType(reactionCreation.postId, reactionCreation.userId, reactionCreation.type);
         if(previousReaction) {
             throw new ConflictException('USER_HAS_ALREADY_REACTED_TO_THIS_POST');
         }
