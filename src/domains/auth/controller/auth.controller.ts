@@ -178,13 +178,21 @@ authRouter.post('/signup', BodyValidation(SignupInputDTO), async (req: Request, 
 
 authRouter.post('/login', BodyValidation(LoginInputDTO), async (req: Request, res: Response) => {
   const data = req.body
-  console.log('logging')
   const token = await service.login(data)
 
   return res.status(HttpStatus.OK).json(token)
 })
 
+authRouter.get('/checkUser', async (req: Request, res: Response) => {
+  const {email, username} = req.query as Record<string, string>
+
+  await service.checkUser(email, username);
+
+  return res.status(HttpStatus.OK)
+})
+
 authRouter.post('/validate', (req: Request, res: Response) => {
+
   const [_bearer, token] = (req.headers.authorization)?.split(' ') ?? []
   return res.status(HttpStatus.OK).json(token)
 })

@@ -43,3 +43,4 @@ export class LoginInputDTO {
   @IsStrongPassword()
     password!: string
 }
+

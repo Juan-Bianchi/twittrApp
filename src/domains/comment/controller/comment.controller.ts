@@ -205,10 +205,9 @@ commentRouter.get('/:postId', async (req: Request, res: Response) => {
     const { postId } = req.params
     const { limit: limString, before, after } = req.query as Record<string, string>
     const limit: number = Number(limString)
-  
-    const commments: PostDTO[] = await service.getCommentByPostIdCursorPaginated(postId, userId, {limit , before, after})
-  
-    return res.status(HttpStatus.OK).json(commments)
+    const comments: PostDTO[] = await service.getCommentByPostIdCursorPaginated(postId, userId, {limit , before, after})
+    
+    return res.status(HttpStatus.OK).json(comments)
 })
 
 commentRouter.post('/', BodyValidation(CreateCommentInputDTO), async (req: Request, res: Response) => {
