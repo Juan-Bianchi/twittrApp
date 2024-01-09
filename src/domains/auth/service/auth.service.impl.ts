@@ -36,9 +36,10 @@ export class AuthServiceImpl implements AuthService {
     return { token }
   }
 
-  async checkUser (email?: string, username?:string): Promise<void> {
-    
+  async checkUser (email?: string, username?:string): Promise<boolean> {
     const existingUser = await this.repository.getByEmailOrUsername(email, username)
     if (existingUser) throw new ConflictException('ALREADY_EXISTING_USER')
+
+    return true;
   }
 }

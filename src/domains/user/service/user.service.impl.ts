@@ -1,5 +1,5 @@
 import { NotFoundException } from '@utils/errors'
-import { CursorPagination, OffsetPagination } from 'types'
+import { OffsetPagination } from 'types'
 import { UserDTO, UserViewDTO } from '../dto'
 import { UserRepository } from '../repository'
 import { UserService } from './user.service'
@@ -51,7 +51,7 @@ export class UserServiceImpl implements UserService {
 
     try {
         if(!imgName) {
-          throw new ConflictException()
+          throw new ConflictException();
         }
         const client = new S3Client({ region });
         const command = new PutObjectCommand({ Bucket: bucket, Key: `${userId}/${imgName}` });
@@ -74,7 +74,7 @@ export class UserServiceImpl implements UserService {
           throw new ConflictException()
         }
         const client = new S3Client({ region });
-        const command = new GetObjectCommand({ Bucket: bucket, Key: `${userId}/${imgName}` });
+        const command = new GetObjectCommand({ Bucket: bucket, Key: `${imgName}` });
 
         const clientUrl:string = await getSignedUrl(client, command, { expiresIn: 3600 });
 

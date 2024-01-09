@@ -27,6 +27,9 @@ export class MessageServiceImpl implements MessageService {
         if(!from || !to || !body) {
             throw new ConflictException('PARAMETERS_ARE_UNDEFINED')
         }
+        console.log('from: ', from)
+        console.log('to: ', to)
+        console.log('message: ', body)
         const senderIsFollowing: boolean = await this.followService.isFollowing(from, to);
         const recieverIsFollowing: boolean = await this.followService.isFollowing(to, from);
         if(!senderIsFollowing || !recieverIsFollowing) {

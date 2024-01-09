@@ -351,12 +351,12 @@ userRouter.get('/getPutSignedURL', async(req: Request, res: Response) => {
 })
 
 userRouter.get('/getSignedURL', async(req: Request, res: Response) => {
-  const { name } = req.body;
+  const { name } = req.query as Record<string, string>;
   const { userId } = res.locals.context;
 
   const url: string = await service.getPreSignedGetURL(name, userId);
 
-  return res.status(HttpStatus.CREATED).json(url);
+  return res.status(HttpStatus.OK).json(url);
 })
 
 

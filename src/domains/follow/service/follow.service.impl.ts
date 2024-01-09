@@ -12,9 +12,7 @@ export class FollowServiceImpl implements FollowService {
 
     async followUser(followerId: string, followedId: string): Promise<FollowDTO> {
         const user: UserViewDTO | null = await this.userRep.getById(followedId);
-        console.log('service')
         if(!user) {
-            console.log('user')
             throw new NotFoundException('user');
         }
         const id: string | null = await this.followRep.getFollowId(followerId, followedId)
@@ -32,13 +30,11 @@ export class FollowServiceImpl implements FollowService {
     async unfollowUser(followerId: string, followedId: string): Promise<FollowDTO> {
         const user: UserViewDTO | null = await this.userRep.getById(followedId);
         if(!user) {
-            console.log('user')
             throw new NotFoundException('user');
         }
         const id: string | null = await this.followRep.getFollowId(followerId, followedId)
         let follow: FollowDTO | null;
         if(!id) {
-            console.log('follow')
             throw new NotFoundException('follow')
         }
         else{

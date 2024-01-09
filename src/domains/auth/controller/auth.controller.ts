@@ -186,9 +186,9 @@ authRouter.post('/login', BodyValidation(LoginInputDTO), async (req: Request, re
 authRouter.get('/checkUser', async (req: Request, res: Response) => {
   const {email, username} = req.query as Record<string, string>
 
-  await service.checkUser(email, username);
+  const isAvailable = await service.checkUser(email, username);
 
-  return res.status(HttpStatus.OK)
+  return res.status(HttpStatus.OK).json(isAvailable)
 })
 
 authRouter.post('/validate', (req: Request, res: Response) => {

@@ -26,7 +26,10 @@ const service: MessageServiceImpl = new MessageServiceImpl(messageRep, followSer
 
 io.use((socket: SocketChat, next) => {
     try {
-        const token: string = socket.handshake.auth.token as string;
+        const [bearer, token] = (socket.handshake.auth.token as string).split(' ') ?? [];
+        // Verify that the Authorization header has the expected shape
+        if (!bearer || !token || bearer !== 'Bearer') throw new UnauthorizedException('MISSING_TOKEN')
+        // Verify that the token is valid
         jwt.verify(token, Constants.TOKEN_SECRET, (err, decoded) => {
             if (err) throw new UnauthorizedException('INVALID_TOKEN')
             if(decoded) {
@@ -34,13 +37,14 @@ io.use((socket: SocketChat, next) => {
                 socket.userId = userId;
             }
         })
-    
         next()
     }
     catch(error) {
         if(error instanceof UnauthorizedException) {
             console.error(error.code)
+            console.log(error.message)
         }
+        io.emit('error', error)
         socket.disconnect()
     }
 })

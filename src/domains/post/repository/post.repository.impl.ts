@@ -45,6 +45,9 @@ export class PostRepositoryImpl implements PostRepository {
               hasPrivateProfile: false
             }
           ]
+        },
+        NOT: {
+          authorId: userId
         }
       },
       orderBy: [
@@ -159,7 +162,7 @@ export class PostRepositoryImpl implements PostRepository {
         author: true,
         comments: true,
         reactions: true
-      }   
+      },   
     })
     return posts.map(post =>{
       return new ExtendedPostDTO(
