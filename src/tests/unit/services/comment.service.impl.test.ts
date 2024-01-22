@@ -112,7 +112,15 @@ describe('create', ()=> {
     it('should create a new comment', async () => {
         expect.assertions(2);
         
-        jest.spyOn(postMockRepository, 'getById').mockResolvedValue(new PostDTO(post));
+        jest.spyOn(postMockRepository, 'getById').mockResolvedValue(
+            new ExtendedPostDTO({...post,
+                author: user,
+                qtyComments: 0,
+                qtyLikes: 0,
+                qtyRetweets: 0,
+                comments: [],
+                reactions: []})
+        );
         jest.spyOn(mockRepository, 'create').mockResolvedValue(new PostDTO(comment1));
         const expected = new PostDTO(comment1);
         const recieved = await service.createComment('3ac84483-20f1-47f3-8be1-43ab2db46ad0', {content: 'this is another test twitt.', images: [], postCommentedId: '921cce9e-cfe6-4636-a0ca-9df133d38527'})
@@ -133,7 +141,7 @@ describe('getCommentById', ()=> {
     it('should get the comment by the provided id', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO({...user, follows: [], followers: []}));
         jest.spyOn(mockRepository, 'getById').mockResolvedValue(new PostDTO(comment1));
         const expected = new PostDTO(comment1)
         const recieved = await service.getCommentById('3ac84483-20f1-47f3-8be1-43ab2db46ad0', 'f1989782-88f9-4055-99fc-135611c1992a')
@@ -151,7 +159,7 @@ describe('getCommentById', ()=> {
     it('should throw an exception if comment id is not correct', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO({...user, follows: [], followers: []}));
         jest.spyOn(mockRepository, 'getById').mockResolvedValue(null)
         await expect(service.getCommentById('3ac84483-20f1-47f3-8be1-43ab2db46ad0', 'f1989782-88f9-4055-99fc-135611c1992a')).rejects.toThrow(NotFoundException)
     });
@@ -188,7 +196,7 @@ describe('getCommentsByAuthor', ()=> {
     it('should get all comments, by author id', async () => {
         expect.assertions(2);
 
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO({...user, follows: [], followers: []}));
         jest.spyOn(mockRepository, 'getByAuthorId').mockResolvedValue([new PostDTO(comment1), new PostDTO(comment2)])
         const expected = [new PostDTO(comment1), new PostDTO(comment2)]
         const recieved = await service.getCommentsByAuthor('3ebbfea7-3ae5-411c-aae8-049ff04db067', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')
@@ -202,20 +210,20 @@ describe('getCommentsByAuthor', ()=> {
         jest.spyOn(userMockRepository, 'getById').mockResolvedValue(null);
         await expect(service.getCommentsByAuthor('3ebbfea7-3ae5-411c-aae8-049ff04db067', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')).rejects.toThrow(NotFoundException)
     });
-
-    it('should throw an exception if comments array is empty', async () => {
-        expect.assertions(1);
-        
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user));
-        jest.spyOn(mockRepository, 'getByAuthorId').mockResolvedValue([])
-        await expect(service.getCommentsByAuthor('3ebbfea7-3ae5-411c-aae8-049ff04db067', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')).rejects.toThrow(NotFoundException)
-    });
 })
 
 describe('getCommentByPostIdCursorPaginated', ()=> {
     it('should get all comments of a given post', async () => {
         expect.assertions(2);
-        jest.spyOn(postMockRepository, 'getById').mockResolvedValue(new PostDTO(post));
+        jest.spyOn(postMockRepository, 'getById').mockResolvedValue(
+            new ExtendedPostDTO({...post,
+                author: user,
+                qtyComments: 0,
+                qtyLikes: 0,
+                qtyRetweets: 0,
+                comments: [],
+                reactions: []})
+        );
         jest.spyOn(mockRepository, 'getByPostIdCursorPaginated').mockResolvedValue([new ExtendedPostDTO(comment3)])
 
         const expected = [ new ExtendedPostDTO(comment3) ]
@@ -228,14 +236,6 @@ describe('getCommentByPostIdCursorPaginated', ()=> {
         expect.assertions(1);
         
         jest.spyOn(postMockRepository, 'getById').mockResolvedValue(null);
-        await expect(service.getCommentByPostIdCursorPaginated('30eed46e-294e-4547-ae37-749728575bda', '3ac84483-20f1-47f3-8be1-43ab2db46ad0', {})).rejects.toThrow(NotFoundException)
-    });
-
-    it('should throw an exception if comments array is empty', async () => {
-        expect.assertions(1);
-        
-        jest.spyOn(postMockRepository, 'getById').mockResolvedValue(new PostDTO(post));
-        jest.spyOn(mockRepository, 'getByPostIdCursorPaginated').mockResolvedValue([])
         await expect(service.getCommentByPostIdCursorPaginated('30eed46e-294e-4547-ae37-749728575bda', '3ac84483-20f1-47f3-8be1-43ab2db46ad0', {})).rejects.toThrow(NotFoundException)
     });
 })

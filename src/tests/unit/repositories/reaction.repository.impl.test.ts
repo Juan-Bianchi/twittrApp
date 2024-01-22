@@ -52,17 +52,17 @@ describe('getReactionByPostIdAndUserId', ()=> {
     it('should get a reaction array given a user id and a post id', async () => {
         expect.assertions(1);
 
-        mockCtx.prisma.reaction.findFirst.mockResolvedValue(reaction1);
-        const expected = new ReactionDTO(reaction1)
+        mockCtx.prisma.reaction.findMany.mockResolvedValue([reaction1]);
+        const expected = [new ReactionDTO(reaction1)]
         const recieved = await repository.getReactionByPostIdAndUserId('921cce9e-cfe6-4636-a0ca-9df133d38527', '83538af2-24e4-4435-bc36-a049183828d8')
         expect(recieved).toEqual(expected)
     });
 
-    it('should get a null as the post id or the user id are not found', async () => {
+    it('should get an empty array as the post id or the user id are not found', async () => {
         expect.assertions(1);
 
-        mockCtx.prisma.reaction.findFirst.mockResolvedValue(null);
-        const expected = null
+        mockCtx.prisma.reaction.findMany.mockResolvedValue([]);
+        const expected: Reaction[] = []
         const recieved = await repository.getReactionByPostIdAndUserId('83538af2-24e4-4435-bc36-a049183828d8', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')
         expect(recieved).toEqual(expected)
     });

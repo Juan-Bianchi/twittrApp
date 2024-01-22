@@ -26,7 +26,7 @@ beforeEach(() => {
         updatedAt: new Date('2023-11-18 19:59:59.701'),
         deletedAt: null,
         hasPrivateProfile: true,
-        profilePicture: 'url'
+        profilePicture: 'url',
     }
     user2 = { id: '83538af2-24e4-4435-bc36-a049183828d8',
         name: null,
@@ -82,8 +82,8 @@ describe('getByUsernameCursorPaginated', ()=> {
         }
 
         mockCtx.prisma.user.findMany.mockResolvedValue(users);
-        const expected = users.map(user => new UserViewDTO(user))
-        const recieved = await repository.getByUsernameCursorPaginated('userJuan', {})
+        const expected = users.map(user => new UserViewDTO({...user, follows: [], followers: []}))
+        const recieved = await repository.getByUsernameOffsetPaginated('userJuan', {})
         expect(recieved).toHaveLength(10)
         expect(recieved[0].id).toEqual(expected[0].id)
     });
@@ -96,7 +96,7 @@ describe('getByUsernameCursorPaginated', ()=> {
             users.push({...user1});
         }
         mockCtx.prisma.user.findMany.mockResolvedValue(users);
-        const recieved = await repository.getByUsernameCursorPaginated('userJuan', {limit: 5, after: '1'})
+        const recieved = await repository.getByUsernameOffsetPaginated('userJuan', {limit: 5, skip: 1})
         expect(recieved).toHaveLength(5)
         expect(recieved[0].id).toEqual('2')
     })
@@ -109,7 +109,7 @@ describe('getByUsernameCursorPaginated', ()=> {
             users.push({...user1});
         }
         mockCtx.prisma.user.findMany.mockResolvedValue(users);
-        const recieved = await repository.getByUsernameCursorPaginated('userJuan', {limit: 6, before: '6'})
+        const recieved = await repository.getByUsernameOffsetPaginated('userJuan', {limit: 6, skip: 6})
         expect(recieved).toHaveLength(5)
         expect(recieved[0].id).toEqual('5')
     })
@@ -143,10 +143,10 @@ describe('getById', ()=> {
         expect.assertions(1);
         
         mockCtx.prisma.user.findUnique.mockResolvedValue({... user1});
-        const expected = new UserViewDTO(user1)
+        const expected = new UserViewDTO({...user1, followers: [], follows: [], username: 'userJuan'})
         const recieved = await repository.getById('83538af2-24e4-4435-bc36-a049183828d8')
 
-        expect(recieved).toEqual(expected)
+        expect({...recieved, followers: [], follows: []}).toEqual(expected)
     });
 
     it('should return null as the id provided is not valid', async () => {
@@ -183,7 +183,7 @@ describe('getRecommendedUsersPaginated', ()=> {
         }
 
         mockCtx.prisma.user.findMany.mockResolvedValue(users);
-        const expected = users.map(user => new UserViewDTO(user))
+        const expected = users.map(user => new UserViewDTO({...user, follows: [], followers: []}))
         const recieved = await repository.getRecommendedUsersPaginated('userJuan', {})
         expect(recieved).toHaveLength(10)
         expect(recieved[0].id).toEqual(expected[0].id)

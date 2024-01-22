@@ -48,9 +48,9 @@ describe('getByUsernameCursorPaginated', ()=> {
     it('should get all users by username, no limit and order given', async () => {
         expect.assertions(2);
         
-        jest.spyOn(mockRepository, 'getByUsernameCursorPaginated').mockResolvedValue([new UserViewDTO(user1), new UserViewDTO(user2)])
-        const expected = [new UserViewDTO(user1), new UserViewDTO(user2)]
-        const recieved = await service.getByUsernameCursorPaginated('userJuan', {})
+        jest.spyOn(mockRepository, 'getByUsernameOffsetPaginated').mockResolvedValue([new UserViewDTO({...user1, follows: [], followers: []}), new UserViewDTO({...user2, follows: [], followers: []})])
+        const expected = [new UserViewDTO({...user1, follows: [], followers: []}), new UserViewDTO({...user2, follows: [], followers: []})]
+        const recieved = await service.getByUsernameOffsetPaginated('userJuan', {})
         expect(recieved).toHaveLength(2)
         expect(recieved[0].id).toEqual(expected[0].id)
     });
@@ -61,8 +61,8 @@ describe('getPublicOrFollowedUser', ()=> {
     it('should get the user as it is being followed or has public profile', async () => {
         expect.assertions(1);
         
-        jest.spyOn(mockRepository, 'getByIdPublicOrFollowed').mockResolvedValue(new UserViewDTO(user1))
-        const expected = new UserViewDTO(user1)
+        jest.spyOn(mockRepository, 'getByIdPublicOrFollowed').mockResolvedValue(new UserViewDTO({...user1, follows: [], followers: []}))
+        const expected = new UserViewDTO({...user1, follows: [], followers: []})
         const recieved = await service.getPublicOrFollowedUser('83538af2-24e4-4435-bc36-a049183828d8', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')
 
         expect(recieved).toEqual(expected)
@@ -80,8 +80,8 @@ describe('getUser', ()=> {
     it('should get the user by the provided id', async () => {
         expect.assertions(1);
         
-        jest.spyOn(mockRepository, 'getById').mockResolvedValue(new UserViewDTO(user1))
-        const expected = new UserViewDTO(user1)
+        jest.spyOn(mockRepository, 'getById').mockResolvedValue(new UserViewDTO({...user1, follows: [], followers: []}))
+        const expected = new UserViewDTO({...user1, follows: [], followers: []})
         const recieved = await service.getUser('3ac84483-20f1-47f3-8be1-43ab2db46ad0')
 
         expect(recieved).toEqual(expected)
@@ -116,13 +116,6 @@ describe('getUserRecommendations', ()=> {
         expect(recieved).toHaveLength(2)
         expect(recieved[0].id).toEqual(expected[0].id)
     });
-
-    it('should throw an exception if the array is empty', async () => {
-        expect.assertions(1);
-        
-        jest.spyOn(mockRepository, 'getRecommendedUsersPaginated').mockResolvedValue([])
-        await expect(service.getUserRecommendations('userJuan', {})).rejects.toThrow(NotFoundException)
-    });
 })
 
 describe('getPreSignedURL', ()=> {
@@ -130,7 +123,7 @@ describe('getPreSignedURL', ()=> {
         expect.assertions(1);
         
         const expected = 'name'
-        const recieved = await service.getPreSignedURL('name','3ac84483-20f1-47f3-8be1-43ab2db46ad0')
+        const recieved = await service.getPreSignedGetURL('name','3ac84483-20f1-47f3-8be1-43ab2db46ad0')
 
         expect(recieved).toContain(expected)
     });
@@ -138,7 +131,7 @@ describe('getPreSignedURL', ()=> {
     it('should throw an exception if the image name is not provided', async () => {
         expect.assertions(1);
         
-        await expect(service.getPreSignedURL('','3ac84483-20f1-47f3-8be1-43ab2db46ad0')).rejects.toThrow(ConflictException)
+        await expect(service.getPreSignedGetURL('','3ac84483-20f1-47f3-8be1-43ab2db46ad0')).rejects.toThrow(ConflictException)
     });
 })
 

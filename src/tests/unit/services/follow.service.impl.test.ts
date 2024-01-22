@@ -56,7 +56,7 @@ describe('followUser', ()=> {
         expect.assertions(2);
         
         jest.spyOn(mockRepository, 'followUser').mockResolvedValue(new FollowDTO(follow1))
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user))
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO({...user, follows: [], followers: []}))
         jest.spyOn(mockRepository, 'getFollowId').mockResolvedValue('23e0ee80-5b2b-4dd7-b31d-80a91156ae95')
         jest.spyOn(mockRepository, 'getFollowById').mockResolvedValue(new FollowDTO(follow1))
         const expected = new FollowDTO(follow1);
@@ -75,7 +75,7 @@ describe('followUser', ()=> {
     it('should throw an exception if there user is already following', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user))
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO({...user, follows: [], followers: []}))
         jest.spyOn(mockRepository, 'getFollowId').mockResolvedValue('23e0ee80-5b2b-4dd7-b31d-80a91156ae95')
         jest.spyOn(mockRepository, 'getFollowById').mockResolvedValue(new FollowDTO(follow2))
         await expect(service.followUser('83538af2-24e4-4435-bc36-a049183828d8', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')).rejects.toThrow(ConflictException)
@@ -86,7 +86,7 @@ describe('unfollowUser', ()=> {
     it('should make the user unfollow an followed user', async () => {
         expect.assertions(2);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user))
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO({...user, follows: [], followers: []}))
         jest.spyOn(mockRepository, 'getFollowId').mockResolvedValue('23e0ee80-5b2b-4dd7-b31d-80a91156ae95')
         jest.spyOn(mockRepository, 'getFollowById').mockResolvedValue(follow2)
         jest.spyOn(mockRepository, 'unfollowUser').mockResolvedValue(new FollowDTO(follow2))
@@ -106,7 +106,7 @@ describe('unfollowUser', ()=> {
     it('should throw an exception if there not a follow relationship', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user))
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO({...user, follows: [], followers: []}))
         jest.spyOn(mockRepository, 'getFollowId').mockResolvedValue(null)
         await expect(service.unfollowUser('83538af2-24e4-4435-bc36-a049183828d8', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')).rejects.toThrow(NotFoundException)
     });
@@ -114,7 +114,7 @@ describe('unfollowUser', ()=> {
     it('should throw an exception if there user is already not following', async () => {
         expect.assertions(1);
         
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user))
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO({...user, follows: [], followers: []}))
         jest.spyOn(mockRepository, 'getFollowId').mockResolvedValue('23e0ee80-5b2b-4dd7-b31d-80a91156ae95')
         jest.spyOn(mockRepository, 'getFollowById').mockResolvedValue(new FollowDTO(follow1))
         await expect(service.unfollowUser('83538af2-24e4-4435-bc36-a049183828d8', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')).rejects.toThrow(ConflictException)
@@ -126,7 +126,7 @@ describe('isFollowing', ()=> {
     it('should return a true if the user is following another user', async () => {
         expect.assertions(1);
 
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user))
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO({...user, follows: [], followers: []}))
         jest.spyOn(mockRepository, 'getFollowId').mockResolvedValue('23e0ee80-5b2b-4dd7-b31d-80a91156ae95')
         const expected = true
         const recieved = await service.isFollowing('83538af2-24e4-4435-bc36-a049183828d8', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')
@@ -136,7 +136,7 @@ describe('isFollowing', ()=> {
     it('should return a false if the user is not following another user', async () => {
         expect.assertions(1);
 
-        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO(user))
+        jest.spyOn(userMockRepository, 'getById').mockResolvedValue(new UserViewDTO({...user, follows: [], followers: []}))
         jest.spyOn(mockRepository, 'getFollowId').mockResolvedValue(null)
         const expected = false
         const recieved = await service.isFollowing('83538af2-24e4-4435-bc36-a049183828d8', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')

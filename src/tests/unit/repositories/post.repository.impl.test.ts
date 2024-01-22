@@ -108,7 +108,10 @@ describe('getPublicOrFollowedByDatePaginated', ()=> {
                     },
             qtyComments: 0,
             qtyLikes: 0,
-            qtyRetweets: 0 }
+            qtyRetweets: 0,
+            comments: [],
+            reactions: []
+        }
         ))
         const recieved = await repository.getPublicOrFollowedByDatePaginated({}, '3ac84483-20f1-47f3-8be1-43ab2db46ad0')
         expect(recieved).toHaveLength(10)
@@ -135,7 +138,10 @@ describe('getPublicOrFollowedByDatePaginated', ()=> {
                     },
             qtyComments: 0,
             qtyLikes: 0,
-            qtyRetweets: 0 }
+            qtyRetweets: 0,
+            comments: [],
+            reactions: []
+        }
         ))
         const recieved = await repository.getPublicOrFollowedByDatePaginated({limit: 5, after: '1'}, '3ac84483-20f1-47f3-8be1-43ab2db46ad0')
         expect(recieved).toHaveLength(5)
@@ -160,9 +166,9 @@ describe('getById', ()=> {
     it('should get the post by the provided id', async () => {
         expect.assertions(1);
         
-        mockCtx.prisma.post.findFirst.mockResolvedValue({... post1});
-        const expected = new PostDTO(post1)
-        const recieved = await repository.getById('921cce9e-cfe6-4636-a0ca-9df133d38527', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')
+        mockCtx.prisma.post.findFirst.mockResolvedValue({... post3});
+        const expected = new ExtendedPostDTO(post3)
+        const recieved = await repository.getById('d695dec1-87cd-421e-9698-fde62d6ece2f', '3ac84483-20f1-47f3-8be1-43ab2db46ad0')
 
         expect(recieved).toEqual(expected)
     });

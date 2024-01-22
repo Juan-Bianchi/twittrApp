@@ -156,7 +156,10 @@ describe('getByPostIdCursorPaginated', ()=> {
                     },
             qtyComments: 0,
             qtyLikes: 0,
-            qtyRetweets: 0 }
+            qtyRetweets: 0,
+            comments: [],
+            reactions: []
+        }
         ))
         const recieved = await repository.getByPostIdCursorPaginated('30eed46e-294e-4547-ae37-749728575bda', '3ac84483-20f1-47f3-8be1-43ab2db46ad0', {})
         expect(recieved).toHaveLength(10)
@@ -183,7 +186,10 @@ describe('getByPostIdCursorPaginated', ()=> {
                     },
             qtyComments: 0,
             qtyLikes: 0,
-            qtyRetweets: 0 }
+            qtyRetweets: 0,
+            comments: [],
+            reactions: []
+        }
         ))
         const recieved = await repository.getByPostIdCursorPaginated('30eed46e-294e-4547-ae37-749728575bda', '3ac84483-20f1-47f3-8be1-43ab2db46ad0', {limit: 5, after: '1'})
         expect(recieved).toHaveLength(5)
