@@ -89,8 +89,8 @@ export class UserServiceImpl implements UserService {
     const region = process.env.AWS_REGION
     const bucket = process.env.AWS_BUCKET
 
-    console.log(region)
-    console.log(bucket)
+    console.log('region',region)
+    console.log('bucket',bucket)
     
     try {
         if(!imgName) {
@@ -104,6 +104,7 @@ export class UserServiceImpl implements UserService {
         return imageURL;
     }
     catch (err) {
+      console.error(err)
       throw new ConflictException('NOT_ABLE_TO_RETRIEVE_SIGNED_URL')
     }
   }
