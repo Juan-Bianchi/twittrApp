@@ -139,25 +139,9 @@ describe('getPost', ()=> {
 describe('delete', ()=> {
     it('should delete the post with the provided id', async () => {
         
-        jest.spyOn(mockRepository, 'getById').mockResolvedValue(new ExtendedPostDTO({...post1, 
-            author: { id: '3ac84483-20f1-47f3-8be1-43ab2db46ad0',
-                        name: null,
-                        email: 'challenge_prueba_juan@outlook.com',
-                        username: 'userJuan',
-                        password: '$2b$10$ELibz83CogxQ91eLYH9qHOxUrvEBSClBVYm0wOpy/zRwvCUoSOUo.',
-                        createdAt: new Date('2023-11-18 19:28:40.065'),
-                        hasPrivateProfile: true,
-                        profilePicture: 'url'
-                    },
-            qtyComments: 0,
-            qtyLikes: 0,
-            qtyRetweets: 0,
-            comments: [],
-            reactions: []
-        }
-        ))
-        jest.spyOn(mockRepository, 'delete').mockResolvedValue(new PostDTO(post1))
-        await service.deletePost('3ac84483-20f1-47f3-8be1-43ab2db46ad0', '921cce9e-cfe6-4636-a0ca-9df133d38527') 
+        jest.spyOn(mockRepository, 'getById').mockResolvedValue(new ExtendedPostDTO(post3))
+        jest.spyOn(mockRepository, 'delete').mockResolvedValue(new PostDTO(post3))
+        await service.deletePost('3ac84483-20f1-47f3-8be1-43ab2db46ad0', 'd695dec1-87cd-421e-9698-fde62d6ece2f') 
         expect(mockRepository.delete).toHaveBeenCalled
     });
 
@@ -171,25 +155,9 @@ describe('delete', ()=> {
     it('should throw an exception if user is not the author of the post', async () => {
         expect.assertions(1);
         
-        jest.spyOn(mockRepository, 'getById').mockResolvedValue(new ExtendedPostDTO({...post, 
-            author: { id: '3ac84483-20f1-47f3-8be1-43ab2db46ad0',
-                        name: null,
-                        email: 'challenge_prueba_juan@outlook.com',
-                        username: 'userJuan',
-                        password: '$2b$10$ELibz83CogxQ91eLYH9qHOxUrvEBSClBVYm0wOpy/zRwvCUoSOUo.',
-                        createdAt: new Date('2023-11-18 19:28:40.065'),
-                        hasPrivateProfile: true,
-                        profilePicture: 'url'
-                    },
-            qtyComments: 0,
-            qtyLikes: 0,
-            qtyRetweets: 0,
-            comments: [],
-            reactions: []
-        }
-        ))
-        jest.spyOn(mockRepository, 'delete').mockResolvedValue(new PostDTO(post))
-        await expect(service.deletePost('wrong', 'f1989782-88f9-4055-99fc-135611c1992a')).rejects.toThrow(ForbiddenException)
+        jest.spyOn(mockRepository, 'getById').mockResolvedValue(new ExtendedPostDTO(post3))
+        jest.spyOn(mockRepository, 'delete').mockResolvedValue(new PostDTO(post3))
+        await expect(service.deletePost('wrong', 'd695dec1-87cd-421e-9698-fde62d6ece2f')).rejects.toThrow(ForbiddenException)
     });
 })
 
