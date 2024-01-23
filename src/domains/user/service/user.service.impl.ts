@@ -3,13 +3,13 @@ import { OffsetPagination } from 'types'
 import { UserDTO, UserViewDTO } from '../dto'
 import { UserRepository } from '../repository'
 import { UserService } from './user.service'
-import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { ConflictException } from "../../../utils/errors";
+import { S3Service } from '@utils/S3/s3.service'
+import { S3CommandType } from '@utils/S3/s3.service.impl'
 
 
 export class UserServiceImpl implements UserService {
-  constructor (private readonly repository: UserRepository) {}
+  constructor (private readonly repository: UserRepository, private readonly s3Service: S3Service) {}
 
   async getByUsernameOffsetPaginated (username: string, options: OffsetPagination): Promise<UserViewDTO[]> {
     
@@ -46,61 +46,48 @@ export class UserServiceImpl implements UserService {
   }
 
   async getPreSignedPutURL(imgName: string, userId: string): Promise<string> {
-    const region = process.env.AWS_REGION
-    const bucket = process.env.AWS_BUCKET
 
     try {
         if(!imgName) {
           throw new ConflictException();
         }
-        const client = new S3Client({ region });
-        const command = new PutObjectCommand({ Bucket: bucket, Key: `${userId}/${imgName}` });
-
-        const clientUrl:string = await getSignedUrl(client, command, { expiresIn: 3600 });
+        const clientUrl:string = await this.s3Service.getSignedURL(S3CommandType.PUT_OBJECT, userId, imgName);
 
         return clientUrl;
     } 
     catch (err) {
+        console.error(err)
         throw new ConflictException('NOT_ABLE_TO_CREATE_PRESIGNED_URL')
     }
   }
 
   async getPreSignedGetURL(imgName: string, userId: string): Promise<string> {
-    const region = process.env.AWS_REGION
-    const bucket = process.env.AWS_BUCKET
-
     try {
         if(!imgName) {
           throw new ConflictException()
         }
-        const client = new S3Client({ region });
-        const command = new GetObjectCommand({ Bucket: bucket, Key: `${imgName}` });
-
-        const clientUrl:string = await getSignedUrl(client, command, { expiresIn: 3600 });
+        const clientUrl:string = await this.s3Service.getSignedURL(S3CommandType.GET_OBJECT, userId, imgName);
 
         return clientUrl;
     } 
     catch (err) {
+        console.error(err)
         throw new ConflictException('NOT_ABLE_TO_CREATE_PRESIGNED_URL')
     }
   }
 
   async updateUserProfilePicture(imgName: string, userId: string): Promise<string> {
-    const region = process.env.AWS_REGION
-    const bucket = process.env.AWS_BUCKET
-    
     try {
         if(!imgName) {
           throw new ConflictException()
         }
-        const client = new S3Client({ region });
-        const command = new GetObjectCommand({ Bucket: bucket, Key: `${userId}/${imgName}` });
-
-        const imageURL: string = await getSignedUrl(client, command, { expiresIn: 3600 });
+        const imageURL:string = await this.s3Service.getSignedURL(S3CommandType.GET_OBJECT, userId, imgName);
         this.repository.updateProfilePicture(userId, `${userId}/${imgName}`);
+        
         return imageURL;
     }
     catch (err) {
+      console.error(err)
       throw new ConflictException('NOT_ABLE_TO_RETRIEVE_SIGNED_URL')
     }
   }

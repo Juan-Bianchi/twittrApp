@@ -19,23 +19,23 @@ datasource db {
 model User {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid // Primary Key
 
-  username String  @unique // Unique constraint
-  name     String? @db.VarChar(35) // Limit display name to 35 characters
-  email    String  @unique // Unique constraint
-  password String
+  username          String  @unique // Unique constraint
+  name              String? @db.VarChar(35) // Limit display name to 35 characters
+  email             String  @unique // Unique constraint
+  password          String
   hasPrivateProfile Boolean @default(false)
-  profilePicture String?
+  profilePicture    String?
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime? // Optional value
 
-  posts     Post[]
-  follows   Follow[] @relation(name: "follows")
-  followers Follow[] @relation(name: "followers")
-  reactions Reaction[]
-  recievedMessages Message [] @relation(name: "from")
-  sentMessages Message [] @relation(name: "to")
+  posts            Post[]
+  follows          Follow[]   @relation(name: "follows")
+  followers        Follow[]   @relation(name: "followers")
+  reactions        Reaction[]
+  recievedMessages Message[]  @relation(name: "from")
+  sentMessages     Message[]  @relation(name: "to")
 }
 
 model Follow {
@@ -55,29 +55,28 @@ model Follow {
 model Post {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid // Primary Key
 
-  authorId String   @db.Uuid // Foreign Key
-  content  String   @db.VarChar(240) // Limit the content to 240 characters
-  images   String[]
-  postCommentedId String? @db.Uuid
+  authorId        String   @db.Uuid // Foreign Key
+  content         String   @db.VarChar(240) // Limit the content to 240 characters
+  images          String[]
+  postCommentedId String?  @db.Uuid
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime? // Optional value
-  isAComment Boolean @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime? // Optional value
+  isAComment Boolean   @default(false)
 
-  reactions Reaction[]
-  comments Post[] @relation(name: "comments")
-  author User @relation(fields: [authorId], references: [id], onDelete: Cascade) // One to many
-  postCommented Post? @relation(name: "comments", fields: [postCommentedId], references: [id], onDelete: Cascade) //One to many
-
+  reactions     Reaction[]
+  comments      Post[]     @relation(name: "comments")
+  author        User       @relation(fields: [authorId], references: [id], onDelete: Cascade) // One to many
+  postCommented Post?      @relation(name: "comments", fields: [postCommentedId], references: [id], onDelete: Cascade) //One to many
 }
 
 model Reaction {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid // Primary Key
 
-  postId String @db.Uuid()  // FK
-  userId String @db.Uuid()  // FK
-  type ReactionType
+  postId String       @db.Uuid() // FK
+  userId String       @db.Uuid() // FK
+  type   ReactionType
 
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade) // One to many
   user User @relation(fields: [userId], references: [id], onDelete: Cascade) // One to many
@@ -91,11 +90,11 @@ enum ReactionType {
 model Message {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid // Primary Key
 
-  from String @db.Uuid()  // FK
-  to String @db.Uuid()  // FK
+  from String   @db.Uuid() // FK
+  to   String   @db.Uuid() // FK
   body String
   date DateTime @default(now())
 
   fromUser User @relation(name: "from", fields: [from], references: [id], onDelete: Cascade) // One to many
-  toUser User @relation(name: "to", fields: [to], references: [id], onDelete: Cascade) // One to many
+  toUser   User @relation(name: "to", fields: [to], references: [id], onDelete: Cascade) // One to many
 }
