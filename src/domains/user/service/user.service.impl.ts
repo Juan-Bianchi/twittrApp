@@ -88,6 +88,9 @@ export class UserServiceImpl implements UserService {
   async updateUserProfilePicture(imgName: string, userId: string): Promise<string> {
     const region = process.env.AWS_REGION
     const bucket = process.env.AWS_BUCKET
+
+    console.log(region)
+    console.log(bucket)
     
     try {
         if(!imgName) {
