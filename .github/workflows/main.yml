@@ -7,6 +7,10 @@ on:
 
 jobs: 
   test-job:
+    environment:
+      name: Development
+
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -19,3 +23,4 @@ jobs:
       
       - name: Test
         run: yarn testUnit
+
