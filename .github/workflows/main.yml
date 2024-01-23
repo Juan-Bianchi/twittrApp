@@ -9,7 +9,9 @@ jobs:
   test-job:
     environment:
       name: Development
-
+    env: 
+      AWS_BUCKET: ${{secrets.AWS_BUCKET}}
+      AWS_REGION: ${{secrets.AWS_REGION}}
 
     runs-on: ubuntu-latest
     steps:
