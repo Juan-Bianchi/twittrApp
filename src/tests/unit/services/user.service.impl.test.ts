@@ -4,9 +4,12 @@ import { UserDTO, UserViewDTO } from '@domains/user/dto';
 import { Context, MockContext, createMockContext } from '../../../context';
 import { UserService, UserServiceImpl } from '@domains/user/service';
 import { ConflictException, NotFoundException } from '@utils';
+import { S3Service } from '@utils/S3/s3.service';
+import { S3ServiceImpl } from '@utils/S3/s3.service.impl';
 
 let service: UserService;
 let mockRepository: UserRepository;
+let mockS3Service: S3Service;
 
 let mockCtx: MockContext
 let ctx: Context
@@ -18,7 +21,8 @@ beforeEach(() => {
     mockCtx = createMockContext()
     ctx = mockCtx as unknown as Context
     mockRepository = new UserRepositoryImpl(mockCtx.prisma)
-    service = new UserServiceImpl(mockRepository)
+    mockS3Service = new S3ServiceImpl()
+    service = new UserServiceImpl(mockRepository, mockS3Service)
     user1 = { id: '3ac84483-20f1-47f3-8be1-43ab2db46ad0',
         name: null,
         email: 'challenge_prueba_juan@outlook.com',
@@ -123,6 +127,7 @@ describe('getPreSignedURL', ()=> {
         expect.assertions(1);
         
         const expected = 'name'
+        jest.spyOn(mockS3Service, 'getSignedURL').mockResolvedValue(expected)
         const recieved = await service.getPreSignedGetURL('name','3ac84483-20f1-47f3-8be1-43ab2db46ad0')
 
         expect(recieved).toContain(expected)
@@ -153,6 +158,8 @@ describe('updateProfilePicture', ()=> {
         expect.assertions(1);
         
         jest.spyOn(mockRepository, 'updateProfilePicture').mockResolvedValue(new UserDTO(user1))
+        const expected = 'name'
+        jest.spyOn(mockS3Service, 'getSignedURL').mockResolvedValue(expected)
         const recieved = await service.updateUserProfilePicture('name','3ac84483-20f1-47f3-8be1-43ab2db46ad0')
 
         expect(recieved).toBeDefined();
