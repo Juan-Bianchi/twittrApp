@@ -89,9 +89,6 @@ export class UserServiceImpl implements UserService {
     const region = process.env.AWS_REGION
     const bucket = process.env.AWS_BUCKET
 
-    console.log('region',region)
-    console.log('bucket',bucket)
-    
     try {
         if(!imgName) {
           throw new ConflictException()
