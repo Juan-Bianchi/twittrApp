@@ -56,7 +56,6 @@ export class UserServiceImpl implements UserService {
         return clientUrl;
     } 
     catch (err) {
-        console.error(err)
         throw new ConflictException('NOT_ABLE_TO_CREATE_PRESIGNED_URL')
     }
   }
@@ -71,7 +70,6 @@ export class UserServiceImpl implements UserService {
         return clientUrl;
     } 
     catch (err) {
-        console.error(err)
         throw new ConflictException('NOT_ABLE_TO_CREATE_PRESIGNED_URL')
     }
   }
@@ -87,7 +85,6 @@ export class UserServiceImpl implements UserService {
         return imageURL;
     }
     catch (err) {
-      console.error(err)
       throw new ConflictException('NOT_ABLE_TO_RETRIEVE_SIGNED_URL')
     }
   }
