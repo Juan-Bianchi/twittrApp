@@ -2,7 +2,7 @@
  * @swagger
  * components:
  *   securitySchemes:
- *     bearerAuth:   
+ *     bearerAuth:
  *       type: http
  *       scheme: bearer
  *       bearerFormat: JWT
@@ -113,7 +113,7 @@
  *           description: The name of the user given inside the system
  *         profilePicture:
  *           type: string
- *           description: The user picture's URL 
+ *           description: The user picture's URL
  *       example:
  *         id: 50e5c468-c8b3-4e83-b2ee-94507c409bb3
  *         name: falseName
@@ -131,7 +131,7 @@
  *         hasPrivateProfile: true
  *     ProfilePictureNameDTO:
  *       type: object
- *       required: 
+ *       required:
  *         - name
  *       properties:
  *         name:
@@ -148,7 +148,7 @@
  *   description: The users managing API
  * /api/user/ :
  *   get:
- *     summary: given a user id brings all public users and followed ones 
+ *     summary: given a user id brings all public users and followed ones
  *     security:
  *       - bearerAuth: []
  *     tags: [User]
@@ -204,10 +204,10 @@
  *         content:
  *           application/json:
  *             schema:
- *               url: 
+ *               url:
  *                 type: string
  *       409:
- *         $ref: '#/components/responses/ConflictException' 
+ *         $ref: '#/components/responses/ConflictException'
  *       500:
  *         description: Internal server error
  * /api/user/{userId} :
@@ -231,7 +231,7 @@
  *             schema:
  *               $ref: '#/components/schemas/UserViewDTO'
  *       404:
- *         $ref: '#/components/responses/NotFoundException' 
+ *         $ref: '#/components/responses/NotFoundException'
  *       500:
  *         description: Internal server error
  * /api/user/by_username/{username} :
@@ -257,7 +257,7 @@
  *               items:
  *                 $ref: '#/components/schemas/UserViewDTO'
  *       404:
- *         $ref: '#/components/responses/NotFoundException' 
+ *         $ref: '#/components/responses/NotFoundException'
  *       500:
  *         description: Internal server error
  * /api/user/privacy :
@@ -280,9 +280,9 @@
  *             schema:
  *               $ref: '#/components/schemas/UserDTO'
  *       404:
- *         $ref: '#/components/responses/NotFoundException' 
+ *         $ref: '#/components/responses/NotFoundException'
  *       500:
- *         description: Internal server error  
+ *         description: Internal server error
  * /api/user/profilePicture :
  *   post:
  *     summary: save the url of the user profile picture
@@ -303,88 +303,89 @@
  *             schema:
  *               $ref: '#/components/schemas/UserDTO'
  *       409:
- *         $ref: '#/components/responses/ConflictException' 
+ *         $ref: '#/components/responses/ConflictException'
  *       500:
- *         description: Internal server error  
+ *         description: Internal server error
  */
 
-import { Request, Response, Router } from 'express'
-import HttpStatus from 'http-status'
+import { Request, Response, Router } from 'express';
+import HttpStatus from 'http-status';
 // express-async-errors is a module that handles async errors in express, don't forget import it in your new controllers
-import 'express-async-errors'
+import 'express-async-errors';
 
-import { BodyValidation, db } from '@utils'
+import { BodyValidation, db } from '@utils';
 
-import { UserRepositoryImpl } from '../repository'
-import { UserService, UserServiceImpl } from '../service'
-import { ChangePrivacyInputDTO, ProfilePictureNameDTO, UserDTO, UserViewDTO } from '../dto'
+import { UserRepositoryImpl } from '../repository';
+import { UserService, UserServiceImpl } from '../service';
+import { ChangePrivacyInputDTO, ProfilePictureNameDTO, UserViewDTO } from '../dto';
+import { S3ServiceImpl } from '@utils/S3/s3.service.impl';
 
-export const userRouter = Router()
+export const userRouter = Router();
 
 // Use dependency injection
-const service: UserService = new UserServiceImpl(new UserRepositoryImpl(db))
+const service: UserService = new UserServiceImpl(new UserRepositoryImpl(db), new S3ServiceImpl());
 
 userRouter.get('/', async (req: Request, res: Response) => {
-  const { userId } = res.locals.context
-  const { limit, skip } = req.query as Record<string, string>
+  const { userId } = res.locals.context;
+  const { limit, skip } = req.query as Record<string, string>;
 
-  const users = await service.getUserRecommendations(userId, { limit: Number(limit), skip: Number(skip) })
+  const users = await service.getUserRecommendations(userId, { limit: Number(limit), skip: Number(skip) });
 
-  return res.status(HttpStatus.OK).json(users)
-})
+  return res.status(HttpStatus.OK).json(users);
+});
 
 userRouter.get('/me', async (req: Request, res: Response) => {
-  const { userId } = res.locals.context
+  const { userId } = res.locals.context;
 
-  const user = await service.getUser(userId)
+  const user = await service.getUser(userId);
 
-  return res.status(HttpStatus.OK).json(user)
-})
+  return res.status(HttpStatus.OK).json(user);
+});
 
-userRouter.get('/getPutSignedURL', async(req: Request, res: Response) => {
+userRouter.get('/getPutSignedURL', async (req: Request, res: Response) => {
   const { name } = req.body;
   const { userId } = res.locals.context;
 
   const url: string = await service.getPreSignedPutURL(name, userId);
 
   return res.status(HttpStatus.CREATED).json(url);
-})
+});
 
-userRouter.get('/getSignedURL', async(req: Request, res: Response) => {
+userRouter.get('/getSignedURL', async (req: Request, res: Response) => {
   const { name } = req.query as Record<string, string>;
   const { userId } = res.locals.context;
 
   const url: string = await service.getPreSignedGetURL(name, userId);
 
   return res.status(HttpStatus.OK).json(url);
-})
-
+});
 
 userRouter.get('/by_username', async (req: Request, res: Response) => {
-  const { limit, skip, username } = req.query as Record<string, string>
-  const users: UserViewDTO[] = await service.getByUsernameOffsetPaginated(username, { limit: Number(limit), skip: Number(skip) });
+  const { limit, skip, username } = req.query as Record<string, string>;
+  const users: UserViewDTO[] = await service.getByUsernameOffsetPaginated(username, {
+    limit: Number(limit),
+    skip: Number(skip),
+  });
 
   return res.status(HttpStatus.OK).json(users);
-})
-
+});
 
 userRouter.get('/:userId', async (req: Request, res: Response) => {
-  const { userId: otherUserId } = req.params
-  const { userId } = res.locals.context
+  const { userId: otherUserId } = req.params;
+  const { userId } = res.locals.context;
 
-  const user = await service.getPublicOrFollowedUser(userId, otherUserId)
+  const user = await service.getPublicOrFollowedUser(userId, otherUserId);
 
-  return res.status(HttpStatus.OK).json(user)
-})
-
+  return res.status(HttpStatus.OK).json(user);
+});
 
 userRouter.delete('/', async (req: Request, res: Response) => {
-  const { userId } = res.locals.context
+  const { userId } = res.locals.context;
 
-  await service.deleteUser(userId)
+  await service.deleteUser(userId);
 
-  return res.status(HttpStatus.OK)
-})
+  return res.status(HttpStatus.OK);
+});
 
 userRouter.patch('/privacy', BodyValidation(ChangePrivacyInputDTO), async (req: Request, res: Response) => {
   const { userId } = res.locals.context;
@@ -393,13 +394,13 @@ userRouter.patch('/privacy', BodyValidation(ChangePrivacyInputDTO), async (req: 
   const user = await service.changeUserPrivacy(userId, hasPrivateProfile);
 
   return res.status(HttpStatus.OK).json(user);
-})
+});
 
-userRouter.post('/profilePicture', BodyValidation(ProfilePictureNameDTO), async(req: Request, res: Response) => {
+userRouter.post('/profilePicture', BodyValidation(ProfilePictureNameDTO), async (req: Request, res: Response) => {
   const { name } = req.body;
   const { userId } = res.locals.context;
 
   const url: string = await service.updateUserProfilePicture(name, userId);
 
   return res.status(HttpStatus.OK).json(url);
-})
+});

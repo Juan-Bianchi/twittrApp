@@ -1,33 +1,33 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsStrongPassword } from 'class-validator'
+import { IsEmail, IsNotEmpty, IsOptional, IsString, IsStrongPassword } from 'class-validator';
 
 export class TokenDTO {
-  token!: string
+  token!: string;
 }
 
 export class SignupInputDTO {
   @IsString()
   @IsOptional()
-    name?: string
+  name?: string;
 
   @IsString()
   @IsNotEmpty()
   @IsEmail()
-    email: string
+  email: string;
 
   @IsString()
   @IsNotEmpty()
-    username: string
+  username: string;
 
   @IsString()
   @IsNotEmpty()
   @IsStrongPassword()
-    password: string
+  password: string;
 
-  constructor (email: string, username: string, password: string, name?: string) {
-    this.email = email
-    this.password = password
-    this.username = username
-    this.name = name
+  constructor(email: string, username: string, password: string, name?: string) {
+    this.email = email;
+    this.password = password;
+    this.username = username;
+    this.name = name;
   }
 }
 
@@ -36,16 +36,15 @@ export class LoginInputDTO {
   @IsString()
   @IsEmail()
   @IsNotEmpty()
-    email?: string
+  email?: string;
 
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-    username?: string
+  username?: string;
 
   @IsString()
   @IsNotEmpty()
   @IsStrongPassword()
-    password!: string
+  password!: string;
 }
-

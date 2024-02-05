@@ -2,7 +2,7 @@
  * @swagger
  * components:
  *   securitySchemes:
- *     bearerAuth:   
+ *     bearerAuth:
  *       type: http
  *       scheme: bearer
  *       bearerFormat: JWT
@@ -19,7 +19,7 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/NotFoundException'
- *     UnauthorizedException: 
+ *     UnauthorizedException:
  *       description: User not authorized beacause there is an authentication problem
  *       content:
  *          application/json:
@@ -121,7 +121,7 @@
  *             schema:
  *               $ref: '#/components/schemas/TokenDTO'
  *       409:
- *         $ref: '#/components/responses/ConflictException'       
+ *         $ref: '#/components/responses/ConflictException'
  *       500:
  *         description: Internal server error
  * /api/auth/login :
@@ -148,51 +148,49 @@
  *       404:
  *         $ref: '#/components/responses/NotFoundException'
  *       500:
- *         description: Internal server error   
+ *         description: Internal server error
  */
 
-
-import { Request, Response, Router } from 'express'
-import HttpStatus from 'http-status'
+import { Request, Response, Router } from 'express';
+import HttpStatus from 'http-status';
 // express-async-errors is a module that handles async errors in express, don't forget import it in your new controllers
-import 'express-async-errors'
+import 'express-async-errors';
 
-import { db, BodyValidation } from '@utils'
-import { UserRepositoryImpl } from '@domains/user/repository'
+import { db, BodyValidation } from '@utils';
+import { UserRepositoryImpl } from '@domains/user/repository';
 
-import { AuthService, AuthServiceImpl } from '../service'
-import { LoginInputDTO, SignupInputDTO } from '../dto'
+import { AuthService, AuthServiceImpl } from '../service';
+import { LoginInputDTO, SignupInputDTO } from '../dto';
 
-export const authRouter = Router()
+export const authRouter = Router();
 
 // Use dependency injection
-const service: AuthService = new AuthServiceImpl(new UserRepositoryImpl(db))
+const service: AuthService = new AuthServiceImpl(new UserRepositoryImpl(db));
 
 authRouter.post('/signup', BodyValidation(SignupInputDTO), async (req: Request, res: Response) => {
-  const data = req.body
+  const data = req.body;
 
-  const token = await service.signup(data)
+  const token = await service.signup(data);
 
-  return res.status(HttpStatus.CREATED).json(token)
-})
+  return res.status(HttpStatus.CREATED).json(token);
+});
 
 authRouter.post('/login', BodyValidation(LoginInputDTO), async (req: Request, res: Response) => {
-  const data = req.body
-  const token = await service.login(data)
+  const data = req.body;
+  const token = await service.login(data);
 
-  return res.status(HttpStatus.OK).json(token)
-})
+  return res.status(HttpStatus.OK).json(token);
+});
 
 authRouter.get('/checkUser', async (req: Request, res: Response) => {
-  const {email, username} = req.query as Record<string, string>
+  const { email, username } = req.query as Record<string, string>;
 
   const isAvailable = await service.checkUser(email, username);
 
-  return res.status(HttpStatus.OK).json(isAvailable)
-})
+  return res.status(HttpStatus.OK).json(isAvailable);
+});
 
 authRouter.post('/validate', (req: Request, res: Response) => {
-
-  const [_bearer, token] = (req.headers.authorization)?.split(' ') ?? []
-  return res.status(HttpStatus.OK).json(token)
-})
+  const [, token] = req.headers.authorization?.split(' ') ?? [];
+  return res.status(HttpStatus.OK).json(token);
+});

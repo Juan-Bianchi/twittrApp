@@ -1,1 +1,1 @@
-export * from './reaction.controller'
+export * from './reaction.controller';

@@ -1,35 +1,35 @@
-import { PrismaClient, ReactionType } from '@prisma/client'
+import { PrismaClient, ReactionType } from '@prisma/client';
 
-import { CursorPagination } from '@types'
+import { CursorPagination } from '@types';
 
-import { PostRepository } from '.'
-import { CreatePostInputDTO, ExtendedPostDTO, PostDTO } from '../dto'
+import { PostRepository } from '.';
+import { CreatePostInputDTO, ExtendedPostDTO, PostDTO } from '../dto';
 
 export class PostRepositoryImpl implements PostRepository {
-  constructor (private readonly db: PrismaClient) {}
+  constructor(private readonly db: PrismaClient) {}
 
-  async create (userId: string, data: CreatePostInputDTO): Promise<PostDTO> {
+  async create(userId: string, data: CreatePostInputDTO): Promise<PostDTO> {
     const post = await this.db.post.create({
       data: {
         authorId: userId,
         isAComment: false,
-        ...data
-      }
-    })
-    return new PostDTO(post)
+        ...data,
+      },
+    });
+    return new PostDTO(post);
   }
 
-  async getPublicOrFollowedByDatePaginated (options: CursorPagination, userId: string): Promise<ExtendedPostDTO[]> {
+  async getPublicOrFollowedByDatePaginated(options: CursorPagination, userId: string): Promise<ExtendedPostDTO[]> {
     const posts = await this.db.post.findMany({
-      cursor: options.after ? { id: options.after } : (options.before) ? { id: options.before } : undefined,
+      cursor: options.after ? { id: options.after } : options.before ? { id: options.before } : undefined,
       skip: options.after ?? options.before ? 1 : undefined,
       take: options.limit ? (options.before ? -options.limit : options.limit) : undefined,
       include: {
         author: true,
         comments: true,
-        reactions: true
+        reactions: true,
       },
-      where : {
+      where: {
         isAComment: false,
         author: {
           OR: [
@@ -37,87 +37,30 @@ export class PostRepositoryImpl implements PostRepository {
               followers: {
                 some: {
                   followerId: userId,
-                  deletedAt: null
-                }
-              }
+                  deletedAt: null,
+                },
+              },
             },
             {
-              hasPrivateProfile: false
-            }
-          ]
+              hasPrivateProfile: false,
+            },
+          ],
         },
         NOT: {
-          authorId: userId
-        }
+          authorId: userId,
+        },
       },
       orderBy: [
         {
-          createdAt: 'desc'
+          createdAt: 'desc',
         },
         {
-          id: 'asc'
-        }
-      ]
-    })
-    return posts.map(post => {
-      return new ExtendedPostDTO(
-        {
-          id: post.id,
-          authorId: post.authorId,
-          content: post.content,
-          images: post.images,
-          createdAt: post.createdAt,
-          isAComment: post.isAComment,
-          author: post.author,
-          comments: post.comments,
-          reactions: post.reactions,
-          qtyComments: post.comments.length,
-          qtyLikes: post.reactions.filter(react => react.type === ReactionType.LIKE).length,
-          qtyRetweets: post.reactions.filter(react => react.type === ReactionType.RETWEET).length,
-        }
-      )
-    })
-  }
-
-  async delete (postId: string): Promise<PostDTO> {
-    return await this.db.post.delete({
-      where: {
-        id: postId
-      }
-    }).then(post => new PostDTO(post))
-  }
-
-  async getById (postId: string, userId: string): Promise<ExtendedPostDTO | null> {
-    const post = await this.db.post.findFirst({
-      where: {
-        id: postId,
-        author: {
-          OR: [
-            {
-              hasPrivateProfile: false
-            },
-            {
-              followers: {
-                some: {
-                  followerId: userId,
-                  deletedAt: null
-                }
-              }
-            },
-            {
-              id: userId, 
-            }
-          ]
-        }      
-      },
-      include: {
-        author: true,
-        comments: true,
-        reactions: true
-      } 
-    })
-    return (post != null) ? new ExtendedPostDTO(
-      {
+          id: 'asc',
+        },
+      ],
+    });
+    return posts.map((post) => {
+      return new ExtendedPostDTO({
         id: post.id,
         authorId: post.authorId,
         content: post.content,
@@ -128,45 +71,53 @@ export class PostRepositoryImpl implements PostRepository {
         comments: post.comments,
         reactions: post.reactions,
         qtyComments: post.comments.length,
-        qtyLikes: post.reactions.filter(react => react.type === ReactionType.LIKE).length,
-        qtyRetweets: post.reactions.filter(react => react.type === ReactionType.RETWEET).length,
-      }
-    ) : null
+        qtyLikes: post.reactions.filter((react) => react.type === ReactionType.LIKE).length,
+        qtyRetweets: post.reactions.filter((react) => react.type === ReactionType.RETWEET).length,
+      });
+    });
   }
 
-  async getByAuthorId (authorId: string, userId: string): Promise<ExtendedPostDTO[]> {
-    const posts = await this.db.post.findMany({
+  async delete(postId: string): Promise<PostDTO> {
+    return await this.db.post
+      .delete({
+        where: {
+          id: postId,
+        },
+      })
+      .then((post) => new PostDTO(post));
+  }
+
+  async getById(postId: string, userId: string): Promise<ExtendedPostDTO | null> {
+    const post = await this.db.post.findFirst({
       where: {
-          authorId,
-          isAComment: false,
-          author: {
-            OR: [
-              {
-                hasPrivateProfile: false
+        id: postId,
+        author: {
+          OR: [
+            {
+              hasPrivateProfile: false,
+            },
+            {
+              followers: {
+                some: {
+                  followerId: userId,
+                  deletedAt: null,
+                },
               },
-              {
-                followers: {
-                  some: {
-                    followerId: userId,
-                    deletedAt: null,
-                  }
-                }
-              },
-              {
-                id: userId
-              }
-            ]
-        }
+            },
+            {
+              id: userId,
+            },
+          ],
+        },
       },
       include: {
         author: true,
         comments: true,
-        reactions: true
-      },   
-    })
-    return posts.map(post =>{
-      return new ExtendedPostDTO(
-        {
+        reactions: true,
+      },
+    });
+    return post != null
+      ? new ExtendedPostDTO({
           id: post.id,
           authorId: post.authorId,
           content: post.content,
@@ -177,10 +128,57 @@ export class PostRepositoryImpl implements PostRepository {
           comments: post.comments,
           reactions: post.reactions,
           qtyComments: post.comments.length,
-          qtyLikes: post.reactions.filter(react => react.type === ReactionType.LIKE).length,
-          qtyRetweets: post.reactions.filter(react => react.type === ReactionType.RETWEET).length,
-        }
-      )
-    })
+          qtyLikes: post.reactions.filter((react) => react.type === ReactionType.LIKE).length,
+          qtyRetweets: post.reactions.filter((react) => react.type === ReactionType.RETWEET).length,
+        })
+      : null;
+  }
+
+  async getByAuthorId(authorId: string, userId: string): Promise<ExtendedPostDTO[]> {
+    const posts = await this.db.post.findMany({
+      where: {
+        authorId,
+        isAComment: false,
+        author: {
+          OR: [
+            {
+              hasPrivateProfile: false,
+            },
+            {
+              followers: {
+                some: {
+                  followerId: userId,
+                  deletedAt: null,
+                },
+              },
+            },
+            {
+              id: userId,
+            },
+          ],
+        },
+      },
+      include: {
+        author: true,
+        comments: true,
+        reactions: true,
+      },
+    });
+    return posts.map((post) => {
+      return new ExtendedPostDTO({
+        id: post.id,
+        authorId: post.authorId,
+        content: post.content,
+        images: post.images,
+        createdAt: post.createdAt,
+        isAComment: post.isAComment,
+        author: post.author,
+        comments: post.comments,
+        reactions: post.reactions,
+        qtyComments: post.comments.length,
+        qtyLikes: post.reactions.filter((react) => react.type === ReactionType.LIKE).length,
+        qtyRetweets: post.reactions.filter((react) => react.type === ReactionType.RETWEET).length,
+      });
+    });
   }
 }

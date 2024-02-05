@@ -2,7 +2,7 @@
  * @swagger
  * components:
  *   securitySchemes:
- *     bearerAuth:   
+ *     bearerAuth:
  *       type: http
  *       scheme: bearer
  *       bearerFormat: JWT
@@ -27,7 +27,7 @@
  *               error:
  *                 type: object
  *                 description: An object where you can set the error code by providing it when it is thrown
- *   schemas:  
+ *   schemas:
  *     CreateCommentInputDTO:
  *       type: object
  *       required:
@@ -43,7 +43,7 @@
  *           description: An array with the images' URLs located on cloud
  *         postCommentedId:
  *           type: string
- *           description: The commented post id 
+ *           description: The commented post id
  *       example:
  *         content: 'This is just an example of a comment for swagger documentation'
  *         postCommentedId: d695dec1-87cd-421e-9698-fde62d6ece2f
@@ -82,7 +82,7 @@
  *         description: Internal server error
  * /api/comment/{postId} :
  *   get:
- *     summary: brings from the database all the comments of a given post 
+ *     summary: brings from the database all the comments of a given post
  *     security:
  *       - bearerAuth: []
  *     tags: [Comment]
@@ -135,7 +135,7 @@
  *               code:
  *                 type: string
  *                 description: prisma specific error code
- *               meta: 
+ *               meta:
  *                 type: object
  *                 description: Additional information about the error
  *               message:
@@ -170,60 +170,61 @@
  *         description: Internal server error
  */
 
-
-import { Request, Response, Router } from 'express'
-import HttpStatus from 'http-status'
+import { Request, Response, Router } from 'express';
+import HttpStatus from 'http-status';
 // express-async-errors is a module that handles async errors in express, don't forget import it in your new controllers
-import 'express-async-errors'
+import 'express-async-errors';
 
-import { db, BodyValidation } from '@utils'
-import { CommentService } from '../service/comment.service'
-import { CommentServiceImpl } from '../service/comment.service.impl'
-import { PostRepositoryImpl } from '@domains/post/repository'
-import { UserRepositoryImpl } from '@domains/user/repository'
-import { CommentRepositoryImpl } from '../repository'
-import { CreateCommentInputDTO } from '../dto'
-import { PostDTO } from '@domains/post/dto'
+import { db, BodyValidation } from '@utils';
+import { CommentService } from '../service/comment.service';
+import { CommentServiceImpl } from '../service/comment.service.impl';
+import { PostRepositoryImpl } from '@domains/post/repository';
+import { UserRepositoryImpl } from '@domains/user/repository';
+import { CommentRepositoryImpl } from '../repository';
+import { CreateCommentInputDTO } from '../dto';
+import { PostDTO } from '@domains/post/dto';
 
-export const commentRouter = Router()
+export const commentRouter = Router();
 
-const service: CommentService = new CommentServiceImpl(new CommentRepositoryImpl(db), 
-                                                       new PostRepositoryImpl(db),
-                                                       new UserRepositoryImpl(db));
+const service: CommentService = new CommentServiceImpl(
+  new CommentRepositoryImpl(db),
+  new PostRepositoryImpl(db),
+  new UserRepositoryImpl(db)
+);
 
 commentRouter.get('/by_user/:user_id', async (req: Request, res: Response) => {
-    const { userId } = res.locals.context
-    const { user_id: authorId } = req.params
+  const { userId } = res.locals.context;
+  const { user_id: authorId } = req.params;
 
-    const comments = await service.getCommentsByAuthor(userId, authorId)
+  const comments = await service.getCommentsByAuthor(userId, authorId);
 
-    return res.status(HttpStatus.OK).json(comments)
-})
+  return res.status(HttpStatus.OK).json(comments);
+});
 
 commentRouter.get('/:postId', async (req: Request, res: Response) => {
-    const { userId } = res.locals.context
-    const { postId } = req.params
-    const { limit: limString, before, after } = req.query as Record<string, string>
-    const limit: number = Number(limString)
-    const comments: PostDTO[] = await service.getCommentByPostIdCursorPaginated(postId, userId, {limit , before, after})
-    
-    return res.status(HttpStatus.OK).json(comments)
-})
+  const { userId } = res.locals.context;
+  const { postId } = req.params;
+  const { limit: limString, before, after } = req.query as Record<string, string>;
+  const limit: number = Number(limString);
+  const comments: PostDTO[] = await service.getCommentByPostIdCursorPaginated(postId, userId, { limit, before, after });
+
+  return res.status(HttpStatus.OK).json(comments);
+});
 
 commentRouter.post('/', BodyValidation(CreateCommentInputDTO), async (req: Request, res: Response) => {
-    const { userId } = res.locals.context
-    const data = req.body
-  
-    const post = await service.createComment(userId, data)
-  
-    return res.status(HttpStatus.CREATED).json(post)
-})
+  const { userId } = res.locals.context;
+  const data = req.body;
+
+  const post = await service.createComment(userId, data);
+
+  return res.status(HttpStatus.CREATED).json(post);
+});
 
 commentRouter.delete('/:commentId', async (req: Request, res: Response) => {
-    const { userId } = res.locals.context
-    const { commentId } = req.params
-  
-    await service.deleteComment(userId, commentId)
-  
-    return res.status(HttpStatus.OK).send(`Deleted comment ${commentId}`)
-})
+  const { userId } = res.locals.context;
+  const { commentId } = req.params;
+
+  await service.deleteComment(userId, commentId);
+
+  return res.status(HttpStatus.OK).send(`Deleted comment ${commentId}`);
+});

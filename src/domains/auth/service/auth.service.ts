@@ -1,7 +1,7 @@
-import { LoginInputDTO, SignupInputDTO, TokenDTO } from '../dto'
+import { LoginInputDTO, SignupInputDTO, TokenDTO } from '../dto';
 
 export interface AuthService {
-  signup: (data: SignupInputDTO) => Promise<TokenDTO>
-  login: (data: LoginInputDTO) => Promise<TokenDTO>
-  checkUser: (email?: string, username?: string) => Promise<boolean>
+  signup: (data: SignupInputDTO) => Promise<TokenDTO>;
+  login: (data: LoginInputDTO) => Promise<TokenDTO>;
+  checkUser: (email?: string, username?: string) => Promise<boolean>;
 }

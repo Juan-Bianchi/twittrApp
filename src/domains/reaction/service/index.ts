@@ -1,2 +1,2 @@
-export * from './reaction.service'
-export * from './reaction.service.impl'
+export * from './reaction.service';
+export * from './reaction.service.impl';

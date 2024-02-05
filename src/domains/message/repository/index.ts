@@ -1,2 +1,2 @@
-export * from './message.repository'
-export * from './message.repository.impl'
+export * from './message.repository';
+export * from './message.repository.impl';

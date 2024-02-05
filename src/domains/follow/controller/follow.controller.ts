@@ -2,7 +2,7 @@
  * @swagger
  * components:
  *   securitySchemes:
- *     bearerAuth:   
+ *     bearerAuth:
  *       type: http
  *       scheme: bearer
  *       bearerFormat: JWT
@@ -63,7 +63,7 @@
  *         followerId:
  *           type: string
  *           description: The id of the user who is going to follow another
- *         followedId: 
+ *         followedId:
  *           type: string
  *           description: The id of the user who is going to be followed
  *     ConflictException:
@@ -139,7 +139,7 @@
  *         $ref: '#/components/responses/ConflictException'
  *       500:
  *         description: Internal server error
- *         
+ *
  * /api/follower/unfollow/{user_id} :
  *   patch:
  *     summary: the authenticated unfollows a user whose id is provided as a request param
@@ -168,13 +168,12 @@
  *         description: Internal server error
  */
 
-
-import { Request, Response, Router } from 'express'
-import HttpStatus from 'http-status'
+import { Request, Response, Router } from 'express';
+import HttpStatus from 'http-status';
 // express-async-errors is a module that handles async errors in express, don't forget import it in your new controllers
-import 'express-async-errors'
+import 'express-async-errors';
 
-import { db } from '@utils'
+import { db } from '@utils';
 import { FollowService, FollowServiceImpl } from '../service';
 import { FollowRepositoryImpl } from '../repository';
 import { UserRepositoryImpl } from '@domains/user/repository';
@@ -182,27 +181,22 @@ import { FollowDTO } from '../dto';
 
 export const followRouter = Router();
 
-const followService: FollowService = new FollowServiceImpl(new FollowRepositoryImpl(db), new UserRepositoryImpl(db))
+const followService: FollowService = new FollowServiceImpl(new FollowRepositoryImpl(db), new UserRepositoryImpl(db));
 
 followRouter.put('/follow/:user_id', async (req: Request, res: Response) => {
-    const {userId: followerID} = res.locals.context;
-    const {user_id: followedID} = req.params;
+  const { userId: followerID } = res.locals.context;
+  const { user_id: followedID } = req.params;
 
-    const newFollow: FollowDTO = await followService.followUser(followerID, followedID);
+  const newFollow: FollowDTO = await followService.followUser(followerID, followedID);
 
-    res.status(HttpStatus.ACCEPTED).json(newFollow);
-})
+  res.status(HttpStatus.ACCEPTED).json(newFollow);
+});
 
-followRouter.patch('/unfollow/:user_id', async (req:Request, res: Response) => {
-    const {userId: followerID} = res.locals.context;
-    const {user_id: followedID} = req.params;
+followRouter.patch('/unfollow/:user_id', async (req: Request, res: Response) => {
+  const { userId: followerID } = res.locals.context;
+  const { user_id: followedID } = req.params;
 
-    const unfollowed: FollowDTO = await followService.unfollowUser(followerID, followedID);
+  const unfollowed: FollowDTO = await followService.unfollowUser(followerID, followedID);
 
-    res.status(HttpStatus.ACCEPTED).json(unfollowed);
-})
-
-
-
-
-
+  res.status(HttpStatus.ACCEPTED).json(unfollowed);
+});

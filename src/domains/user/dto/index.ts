@@ -1,62 +1,61 @@
-import { FollowDTO } from "@domains/follow/dto"
-import { IsBoolean, IsString } from "class-validator"
-
+import { FollowDTO } from '@domains/follow/dto';
+import { IsBoolean, IsString } from 'class-validator';
 
 export class UserDTO {
-  constructor (user: UserDTO) {
-    this.id = user.id
-    this.name = user.name
-    this.createdAt = user.createdAt
-    this.hasPrivateProfile = user.hasPrivateProfile
+  constructor(user: UserDTO) {
+    this.id = user.id;
+    this.name = user.name;
+    this.createdAt = user.createdAt;
+    this.hasPrivateProfile = user.hasPrivateProfile;
     this.profilePicture = user.profilePicture;
   }
 
-  id: string
-  name: string | null
-  createdAt: Date
-  hasPrivateProfile: boolean
-  profilePicture: string | null
+  id: string;
+  name: string | null;
+  createdAt: Date;
+  hasPrivateProfile: boolean;
+  profilePicture: string | null;
 }
 
 export class ExtendedUserDTO extends UserDTO {
-  constructor (user: ExtendedUserDTO) {
-    super(user)
-    this.email = user.email
-    this.username = user.username
-    this.password = user.password
+  constructor(user: ExtendedUserDTO) {
+    super(user);
+    this.email = user.email;
+    this.username = user.username;
+    this.password = user.password;
   }
 
-  email!: string
-  username!: string
-  password!: string
+  email!: string;
+  username!: string;
+  password!: string;
 }
 
 export class UserViewDTO {
-  constructor (user: UserViewDTO) {
-    this.id = user.id
-    this.name = user.name
-    this.username = user.username
-    this.hasPrivateProfile = user.hasPrivateProfile
-    this.profilePicture = user.profilePicture
-    this.followers = user.followers
-    this.follows = user.follows
+  constructor(user: UserViewDTO) {
+    this.id = user.id;
+    this.name = user.name;
+    this.username = user.username;
+    this.hasPrivateProfile = user.hasPrivateProfile;
+    this.profilePicture = user.profilePicture;
+    this.followers = user.followers;
+    this.follows = user.follows;
   }
 
-  id: string
-  name: string | null
-  username: string
-  hasPrivateProfile: boolean
-  profilePicture: string | null
-  follows!: FollowDTO[]
-  followers!: FollowDTO[]
+  id: string;
+  name: string | null;
+  username: string;
+  hasPrivateProfile: boolean;
+  profilePicture: string | null;
+  follows!: FollowDTO[];
+  followers!: FollowDTO[];
 }
 
 export class ChangePrivacyInputDTO {
   @IsBoolean()
-    hasPrivateProfile!: boolean
+  hasPrivateProfile!: boolean;
 }
 
 export class ProfilePictureNameDTO {
   @IsString()
-    name!: string
+  name!: string;
 }
