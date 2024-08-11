@@ -40,6 +40,4 @@ const ReactionType: {
   RETWEET: 'RETWEET',
 };
 
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type ReactionType = (typeof ReactionType)[keyof typeof ReactionType];

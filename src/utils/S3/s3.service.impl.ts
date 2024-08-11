@@ -18,8 +18,7 @@ export class S3ServiceImpl implements S3Service {
     this.client = new S3Client({ region: this.region });
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async getSignedURL(commandType: S3CommandType, userId: string, imgName: string) {
+  async getSignedURL(commandType: S3CommandType, userId: string, imgName: string): Promise<string> {
     const command: GetObjectCommand | PutObjectCommand =
       commandType === S3CommandType.GET_OBJECT
         ? new GetObjectCommand({ Bucket: this.bucket, Key: `${userId}/${imgName}` })

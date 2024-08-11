@@ -1,7 +1,7 @@
 import { MessageService } from './message.service';
 import { MessageRepository } from '../repository';
 import { FollowService } from '@domains/follow/service';
-import { ConflictException, ForbiddenException, NotFoundException } from '@utils';
+import { ConflictException, ForbiddenException, Logger, NotFoundException } from '@utils';
 import { MessageDTO } from '../dto';
 
 export class MessageServiceImpl implements MessageService {
@@ -25,9 +25,9 @@ export class MessageServiceImpl implements MessageService {
     if (!from || !to || !body) {
       throw new ConflictException('PARAMETERS_ARE_UNDEFINED');
     }
-    console.log('from: ', from);
-    console.log('to: ', to);
-    console.log('message: ', body);
+    Logger.info('from: ', from);
+    Logger.info('to: ', to);
+    Logger.info('message: ', body);
     const senderIsFollowing: boolean = await this.followService.isFollowing(from, to);
     const recieverIsFollowing: boolean = await this.followService.isFollowing(to, from);
     if (!senderIsFollowing || !recieverIsFollowing) {

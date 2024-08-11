@@ -7,19 +7,12 @@ import swaggerUi from 'swagger-ui-express';
 import { Constants, NodeEnv, Logger } from '@utils';
 import { router } from '@router';
 import { ErrorHandling } from '@utils/errors';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
+import { createServer, Server } from 'http';
 import { specs } from '@utils/swagger';
+import { useSocketIo } from '@utils/socket';
 
 const app = express();
-const server = createServer(app);
-export const io = new Server(server, {
-  cors: {
-    origin: 'http://localhost:3000',
-  },
-});
-
-import '@utils/socket';
+const server: Server = createServer(app);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
 
@@ -33,10 +26,11 @@ app.use(express.json()); // Parses application/json payloads request bodies
 app.use(express.urlencoded({ extended: false })); // Parse application/x-www-form-urlencoded request bodies
 app.use(cookieParser()); // Parse cookies
 
+console.log(Constants.CORS_WHITELIST)
 // Set up CORS
 app.use(
   cors({
-    origin: '*',
+    origin: Constants.CORS_WHITELIST,
   })
 );
 
@@ -44,6 +38,10 @@ app.use('/api', router);
 
 app.use(ErrorHandling);
 
-server.listen(Constants.PORT, () => {
+export const listeningServer  = server.listen(Constants.PORT, () => {
   Logger.info(`Server listening on port ${Constants.PORT}`);
 });
+
+const io = useSocketIo(listeningServer);
+
+app.set('socket.io', io);

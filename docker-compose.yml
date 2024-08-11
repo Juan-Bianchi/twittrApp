@@ -2,7 +2,6 @@ services:
   db:
     image: postgres:alpine
     container_name: db
-    restart: always
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
